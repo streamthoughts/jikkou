@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Resource as Code Framework for Apache Kafka and Apache Iceberg on Jikkou</title><link>https://www.jikkou.io/</link><description>Recent content in Resource as Code Framework for Apache Kafka and Apache Iceberg on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Migrating to Jikkou 1.0</title><link>https://www.jikkou.io/docs/how-to-guides/migration/migrate-to-1.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/migration/migrate-to-1.0/</guid><description>&lt;p>Jikkou 1.0.0 is a major release. The good news: the project&amp;rsquo;s first real breaking change — the move from &lt;code>io.streamthoughts.jikkou.*&lt;/code> to &lt;code>io.jikkou.*&lt;/code> — ships with a runtime deprecation shim, so most existing setups will run unchanged with warnings while you migrate at your own pace.&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou — Resource as Code for Apache Kafka on Jikkou</title><link>https://www.jikkou.io/</link><description>Recent content in Jikkou — Resource as Code for Apache Kafka on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Migrating to Jikkou 1.0</title><link>https://www.jikkou.io/docs/how-to-guides/migration/migrate-to-1.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/migration/migrate-to-1.0/</guid><description>&lt;p>Jikkou 1.0.0 is a major release. The good news: the project&amp;rsquo;s first real breaking change — the move from &lt;code>io.streamthoughts.jikkou.*&lt;/code> to &lt;code>io.jikkou.*&lt;/code> — ships with a runtime deprecation shim, so most existing setups will run unchanged with warnings while you migrate at your own pace.&lt;/p>
 &lt;p>This guide walks through the upgrade end to end.&lt;/p>
 &lt;h2 id="before-you-upgrade">Before You Upgrade&lt;/h2>
 &lt;p>A short checklist before you start:&lt;/p>
@@ -170,7 +170,18 @@ Most of the time, the latest version of Jikkou is always built for working with 
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>}&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>}&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Local Resource Repository</title><link>https://www.jikkou.io/docs/reference/providers/core/repositories/local/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/reference/providers/core/repositories/local/</guid><description>&lt;h2 id="overview">Overview&lt;/h2>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Jikkou vs Terraform for Apache Kafka</title><link>https://www.jikkou.io/docs/comparisons/jikkou-vs-terraform/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/comparisons/jikkou-vs-terraform/</guid><description>&lt;div class="alert alert-primary" role="alert">
+&lt;h4 class="alert-heading">TL;DR&lt;/h4>
+
+ Use &lt;strong>Terraform&lt;/strong> when Kafka is one of thirty resource types you provision (clusters, networks, service
+accounts, API keys). Use &lt;strong>Jikkou&lt;/strong> when you manage what lives &lt;em>inside&lt;/em> Kafka: hundreds of topics, ACLs,
+quotas, and schemas that must stay reconciled against the real cluster, not against a
+state file. Many teams use both: Terraform provisions the cluster, Jikkou manages its contents.
+
+&lt;/div>
+
+&lt;h2 id="the-state-file-problem">The state-file problem&lt;/h2>
+&lt;p>Terraform trusts its state file. Kafka clusters do not stay in sync with state files.&lt;/p></description></item><item><title>Local Resource Repository</title><link>https://www.jikkou.io/docs/reference/providers/core/repositories/local/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/reference/providers/core/repositories/local/</guid><description>&lt;h2 id="overview">Overview&lt;/h2>
 &lt;p>The &lt;code>LocalResourceRepository&lt;/code> can be used to load resources from local files or directories.&lt;/p>
 &lt;h2 id="configuration">Configuration&lt;/h2>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="l">jikkou {&lt;/span>&lt;span class="w">
@@ -312,7 +323,19 @@ all resources accepted by validation at once, or each resource one by one.&lt;/p
 &lt;p>Follow these few steps to download the latest stable versions and get started.&lt;/p>
 &lt;h4 id="prerequisites">Prerequisites&lt;/h4>
 &lt;p>To be able to run Jikkou API Server, the only requirement is to have a working Java 25 installation.
-You can check the correct installation of Java by issuing the following command:&lt;/p></description></item><item><title>Labels and Annotations</title><link>https://www.jikkou.io/docs/concepts/labels-and-annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/labels-and-annotations/</guid><description>&lt;h2 id="labels">Labels&lt;/h2>
+You can check the correct installation of Java by issuing the following command:&lt;/p></description></item><item><title>Jikkou vs Strimzi Topic Operator</title><link>https://www.jikkou.io/docs/comparisons/jikkou-vs-strimzi/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/comparisons/jikkou-vs-strimzi/</guid><description>&lt;div class="alert alert-primary" role="alert">
+&lt;h4 class="alert-heading">TL;DR&lt;/h4>
+
+ If your Kafka clusters run on Kubernetes under &lt;strong>Strimzi&lt;/strong>, keep the &lt;strong>Topic Operator&lt;/strong> for topics; it is
+the right tool there. Use &lt;strong>Jikkou&lt;/strong> for everything it cannot reach: Schema Registry subjects, Kafka Connect
+connectors, ACLs and quotas at breadth, Confluent Cloud, Aiven, Amazon MSK, and any cluster that does not
+live in your Kubernetes estate. If you are &lt;strong>not&lt;/strong> on Kubernetes, the Topic Operator is not an option at all,
+and Jikkou covers the whole surface on its own.
+
+&lt;/div>
+
+&lt;h2 id="two-different-jobs">Two different jobs&lt;/h2>
+&lt;p>The cleanest way to see the difference: &lt;strong>Strimzi runs Kafka; Jikkou manages what is inside it.&lt;/strong>&lt;/p></description></item><item><title>Labels and Annotations</title><link>https://www.jikkou.io/docs/concepts/labels-and-annotations/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/labels-and-annotations/</guid><description>&lt;h2 id="labels">Labels&lt;/h2>
 &lt;p>You can use labels to attach arbitrary identifying metadata to objects.&lt;/p>
 &lt;p>Labels are key/value maps:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">

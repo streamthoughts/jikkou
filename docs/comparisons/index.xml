@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>How Jikkou Compares on Jikkou</title><link>https://www.jikkou.io/docs/comparisons/</link><description>Recent content in How Jikkou Compares on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/docs/comparisons/index.xml" rel="self" type="application/rss+xml"/><item><title>Jikkou vs Terraform for Apache Kafka</title><link>https://www.jikkou.io/docs/comparisons/jikkou-vs-terraform/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/comparisons/jikkou-vs-terraform/</guid><description>&lt;div class="alert alert-primary" role="alert">
+&lt;h4 class="alert-heading">TL;DR&lt;/h4>
+
+ Use &lt;strong>Terraform&lt;/strong> when Kafka is one of thirty resource types you provision (clusters, networks, service
+accounts, API keys). Use &lt;strong>Jikkou&lt;/strong> when you manage what lives &lt;em>inside&lt;/em> Kafka: hundreds of topics, ACLs,
+quotas, and schemas that must stay reconciled against the real cluster, not against a
+state file. Many teams use both: Terraform provisions the cluster, Jikkou manages its contents.
+
+&lt;/div>
+
+&lt;h2 id="the-state-file-problem">The state-file problem&lt;/h2>
+&lt;p>Terraform trusts its state file. Kafka clusters do not stay in sync with state files.&lt;/p></description></item><item><title>Jikkou vs Strimzi Topic Operator</title><link>https://www.jikkou.io/docs/comparisons/jikkou-vs-strimzi/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/comparisons/jikkou-vs-strimzi/</guid><description>&lt;div class="alert alert-primary" role="alert">
+&lt;h4 class="alert-heading">TL;DR&lt;/h4>
+
+ If your Kafka clusters run on Kubernetes under &lt;strong>Strimzi&lt;/strong>, keep the &lt;strong>Topic Operator&lt;/strong> for topics; it is
+the right tool there. Use &lt;strong>Jikkou&lt;/strong> for everything it cannot reach: Schema Registry subjects, Kafka Connect
+connectors, ACLs and quotas at breadth, Confluent Cloud, Aiven, Amazon MSK, and any cluster that does not
+live in your Kubernetes estate. If you are &lt;strong>not&lt;/strong> on Kubernetes, the Topic Operator is not an option at all,
+and Jikkou covers the whole surface on its own.
+
+&lt;/div>
+
+&lt;h2 id="two-different-jobs">Two different jobs&lt;/h2>
+&lt;p>The cleanest way to see the difference: &lt;strong>Strimzi runs Kafka; Jikkou manages what is inside it.&lt;/strong>&lt;/p></description></item></channel></rss>
