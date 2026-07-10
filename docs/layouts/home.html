@@ -1,0 +1,325 @@
+{{ define "main" }}
+<div class="jk-home">
+
+  <!-- ============ HERO ============ -->
+  <header class="jk-hero">
+    <div class="jk-wrap">
+      <div>
+        <div class="jk-hero-badge"><span class="jk-dot"></span> Open Source&nbsp;·&nbsp;Apache License 2.0</div>
+        <h1>Stop managing Kafka with tickets&nbsp;and&nbsp;scripts.</h1>
+        <p class="jk-hero-rotator">Resource as Code for
+          <span class="jk-slot">
+            <span class="jk-word jk-word-kafka active">Apache Kafka</span>
+            <span class="jk-word jk-word-iceberg">Apache Iceberg</span>
+          </span>
+          and beyond.</p>
+        <p class="jk-hero-sub">Declare <strong>topics, ACLs, schemas, quotas, and connectors</strong> as YAML.
+          Review in pull requests. Jikkou reconciles your Git repository against your
+          <strong>real clusters</strong>. No state file, no drift, no tickets.</p>
+        <div class="jk-hero-ctas">
+          <a class="jk-btn jk-btn-primary" href="/docs/install/">Get Started →</a>
+          <a class="jk-btn jk-btn-ghost" href="https://github.com/streamthoughts/jikkou" target="_blank" rel="noopener">View on GitHub</a>
+        </div>
+        <div class="jk-hero-stats">
+          <div class="jk-hero-stat"><b>5+</b><span>Kafka platforms</span></div>
+          <div class="jk-hero-stat"><b>20+</b><span>resource types</span></div>
+          <div class="jk-hero-stat"><b>CLI + API</b><span>dual interface</span></div>
+          <div class="jk-hero-stat"><b>Apache-2.0</b><span>license</span></div>
+        </div>
+      </div>
+      <div class="jk-hero-code">
+        <div class="jk-codewin">
+          <div class="jk-codewin-head"><span class="jk-dots"><i></i><i></i><i></i></span> kafka-topic.yaml <span class="jk-tag">YAML</span></div>
+          <pre><code><span class="jk-c-key">apiVersion</span>: <span class="jk-c-val">kafka.jikkou.io/v1</span>
+<span class="jk-c-key">kind</span>: <span class="jk-c-val">KafkaTopic</span>
+<span class="jk-c-key">metadata</span>:
+  <span class="jk-c-key">name</span>: <span class="jk-c-str">'orders-events'</span>
+<span class="jk-c-key">spec</span>:
+  <span class="jk-c-key">partitions</span>: <span class="jk-c-num">6</span>
+  <span class="jk-c-key">replicas</span>: <span class="jk-c-num">3</span>
+  <span class="jk-c-key">configs</span>:
+    <span class="jk-c-key">retention.ms</span>: <span class="jk-c-num">604800000</span>
+    <span class="jk-c-key">min.insync.replicas</span>: <span class="jk-c-num">2</span></code></pre>
+        </div>
+        <div class="jk-codewin jk-terminal">
+          <div class="jk-codewin-head"><span class="jk-dots"><i></i><i></i><i></i></span> Terminal</div>
+          <pre><code><span class="jk-c-prompt">$</span> <span class="jk-c-cmd">jikkou</span> diff --files kafka-topic.yaml
+<span class="jk-c-add">+ CREATE</span>  KafkaTopic/<span class="jk-c-val">orders-events</span> <span class="jk-c-dim">(partitions: 6, replicas: 3)</span>
+
+<span class="jk-c-prompt">$</span> <span class="jk-c-cmd">jikkou</span> apply --files kafka-topic.yaml
+<span class="jk-c-ok">✓</span> <span class="jk-c-dim">Validating resources…</span>
+<span class="jk-c-ok">✓</span> <span class="jk-c-dim">Computing changes…</span>
+<span class="jk-c-ok">CHANGED</span>  KafkaTopic/<span class="jk-c-val">orders-events</span>
+
+<span class="jk-c-ok">✓ Reconciliation completed.</span> <span class="jk-c-num">1</span> <span class="jk-c-dim">changed,</span> <span class="jk-c-num">0</span> <span class="jk-c-dim">failed</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ PERSONAS ============ -->
+  <section class="jk-section">
+    <div class="jk-wrap">
+      <div class="jk-section-head jk-reveal">
+        <div class="jk-eyebrow">Who it's for</div>
+        <h2>Built for the team that runs Kafka for everyone else</h2>
+      </div>
+      <div class="jk-persona-grid">
+        <div class="jk-persona jk-primary jk-reveal">
+          <div class="jk-who">Platform teams</div>
+          <blockquote>50 app teams, and every topic request is a ticket.</blockquote>
+          <p>Give teams a paved path: YAML + pull request + CI. You keep the guardrails: naming rules,
+             replication minimums, and partition limits, enforced on every change.</p>
+        </div>
+        <div class="jk-persona jk-reveal">
+          <div class="jk-who">DevOps &amp; SRE</div>
+          <blockquote>Nobody remembers why that topic has 96 partitions.</blockquote>
+          <p>Your whole Kafka configuration, versioned in Git and diffed against reality.
+             Out-of-band changes show up; history explains itself.</p>
+        </div>
+        <div class="jk-persona jk-reveal">
+          <div class="jk-who">App teams</div>
+          <blockquote>We just want to ship, not learn Kafka administration.</blockquote>
+          <p>Self-service topics and schemas inside platform-enforced validations.
+             A pull request instead of a ticket queue.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="jk-section jk-alt">
+    <div class="jk-wrap">
+      <div class="jk-section-head jk-reveal">
+        <div class="jk-eyebrow">Workflow</div>
+        <h2>Describe. Diff. Apply.</h2>
+        <p>A reconciliation loop, not a script: Jikkou computes the difference between your Git repository
+           and the real cluster, and applies only what changed.</p>
+      </div>
+      <div class="jk-steps">
+        <div class="jk-step jk-reveal">
+          <span class="jk-cmd">1 · YAML</span>
+          <h3>Describe</h3>
+          <p>Define topics, ACLs, schemas, quotas, and connectors in declarative YAML, with Jinja templating
+             for the 300 topics that differ by one value.</p>
+        </div>
+        <div class="jk-step jk-reveal">
+          <span class="jk-cmd">2 · jikkou diff</span>
+          <h3>Diff</h3>
+          <p>Preview every change against the actual cluster state, in the pull request, before anything
+             happens. Validations catch policy violations here.</p>
+        </div>
+        <div class="jk-step jk-reveal">
+          <span class="jk-cmd">3 · jikkou apply</span>
+          <h3>Apply</h3>
+          <p>Reconcile the desired state. Only the necessary changes are applied: created, altered,
+             deleted, reported.</p>
+        </div>
+      </div>
+      <div class="jk-demo jk-reveal">
+        {{ .Content }}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BENTO FEATURES ============ -->
+  <section class="jk-section">
+    <div class="jk-wrap">
+      <div class="jk-section-head jk-reveal">
+        <div class="jk-eyebrow">Why Jikkou</div>
+        <h2>The parts that actually change your week</h2>
+      </div>
+      <div class="jk-bento-grid">
+        <div class="jk-bento jk-lg jk-reveal">
+          <div class="jk-icon">⇄</div>
+          <h3>Stateless reconciliation &amp; drift detection</h3>
+          <p>No state file to protect or migrate. Every diff compares Git against the <em>real</em> cluster,
+             so the topic someone "fixed" by hand during an incident shows up tomorrow morning instead of at the next audit.</p>
+        </div>
+        <div class="jk-bento jk-lg jk-reveal">
+          <div class="jk-icon">⛁</div>
+          <h3>Multi-cluster fleet apply</h3>
+          <p>Provider groups target your whole estate (on-prem, Confluent Cloud, Aiven, MSK) with one
+             command. Same YAML, five clusters, zero copy-paste.</p>
+        </div>
+        <div class="jk-bento jk-lg jk-reveal">
+          <div class="jk-icon">{}</div>
+          <h3>Templating at scale</h3>
+          <p>Jinja templates + per-environment values files. One definition for the 300 topics that differ
+             by a name and a number.</p>
+        </div>
+        <div class="jk-bento jk-lg jk-reveal">
+          <div class="jk-icon">⎇</div>
+          <h3>GitOps-native</h3>
+          <p>YAML in Git, <code>diff</code> in the pull request, <code>apply</code> in CI.
+             Review, audit trail, and rollback come free with your existing workflow.</p>
+        </div>
+        <div class="jk-bento jk-sm jk-reveal">
+          <div class="jk-icon">◎</div>
+          <h3>Dry-run mode</h3>
+          <p>See exactly what would happen. Nothing touches production unreviewed.</p>
+        </div>
+        <div class="jk-bento jk-sm jk-reveal">
+          <div class="jk-icon">✓</div>
+          <h3>Validation policies</h3>
+          <p>Naming, min ISR, and partition limits, enforced before anything is applied.</p>
+        </div>
+        <div class="jk-bento jk-sm jk-reveal">
+          <div class="jk-icon">▸_</div>
+          <h3>CLI + REST API server</h3>
+          <p>Native binaries for CI; an API server for team-wide automation.</p>
+        </div>
+        <div class="jk-bento jk-sm jk-reveal">
+          <div class="jk-icon">＋</div>
+          <h3>Extensible providers</h3>
+          <p>A Java API to manage any resource, not just Kafka.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PLATFORMS ============ -->
+  <section class="jk-section jk-alt">
+    <div class="jk-wrap">
+      <div class="jk-section-head jk-reveal">
+        <div class="jk-eyebrow">Coverage</div>
+        <h2>One model, every platform</h2>
+      </div>
+      <div class="jk-logo-row jk-reveal">
+        <span class="jk-logo-chip"><span class="jk-sq"></span>Apache Kafka</span>
+        <span class="jk-logo-chip"><span class="jk-sq"></span>Confluent Cloud</span>
+        <span class="jk-logo-chip"><span class="jk-sq"></span>Amazon MSK</span>
+        <span class="jk-logo-chip"><span class="jk-sq"></span>Aiven</span>
+        <span class="jk-logo-chip"><span class="jk-sq"></span>Redpanda</span>
+        <span class="jk-logo-chip"><span class="jk-sq"></span>Schema Registry</span>
+        <span class="jk-logo-chip"><span class="jk-sq"></span>Kafka Connect</span>
+        <span class="jk-logo-chip"><span class="jk-sq"></span>AWS Glue</span>
+      </div>
+      <div class="jk-beyond jk-reveal">
+        <div>
+          <div class="jk-eyebrow jk-eyebrow-cyan">Beyond Kafka</div>
+          <h3>The engine is platform-agnostic</h3>
+          <p>Apache Iceberg tables, views, and namespaces: same model, same workflow, same pull request.
+             Your platform's next system can be a provider away.</p>
+        </div>
+        <pre><code><span class="jk-c-key">apiVersion</span>: <span class="jk-c-val">iceberg.jikkou.io/v1</span>
+<span class="jk-c-key">kind</span>: <span class="jk-c-val">IcebergTable</span>
+<span class="jk-c-key">metadata</span>:
+  <span class="jk-c-key">name</span>: <span class="jk-c-str">'analytics.orders'</span>
+<span class="jk-c-key">spec</span>:
+  <span class="jk-c-key">schema</span>:
+    <span class="jk-c-key">fields</span>:
+      - <span class="jk-c-key">name</span>: <span class="jk-c-str">'order_id'</span>
+        <span class="jk-c-key">type</span>: <span class="jk-c-val">long</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMPARISONS ============ -->
+  <section class="jk-section">
+    <div class="jk-wrap">
+      <div class="jk-section-head jk-reveal">
+        <div class="jk-eyebrow">Honest comparisons</div>
+        <h2>Already using Terraform or Strimzi?</h2>
+        <p>Good news: they're not enemies. Here is exactly where each tool wins, and where Jikkou fits.</p>
+      </div>
+      <div class="jk-compare-grid">
+        <a class="jk-compare-card jk-reveal" href="/docs/comparisons/jikkou-vs-terraform/">
+          <div class="jk-vs">Jikkou vs Terraform</div>
+          <h3>Terraform provisions your cluster. Jikkou manages what lives inside it.</h3>
+          <p>No state file to drift: every diff runs against the real cluster. Keep Terraform for
+             infrastructure (clusters, networks, credentials).</p>
+          <span class="jk-link">Read the comparison →</span>
+        </a>
+        <a class="jk-compare-card jk-reveal" href="/docs/comparisons/jikkou-vs-strimzi/">
+          <div class="jk-vs">Jikkou vs Strimzi Topic Operator</div>
+          <h3>Keep the Topic Operator for topics. Jikkou covers everything it can't reach.</h3>
+          <p>Schema Registry, Connect, ACLs, quotas, Confluent Cloud, Aiven, MSK, and every cluster
+             outside your Kubernetes estate.</p>
+          <span class="jk-link">Read the comparison →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROOF ============ -->
+  <section class="jk-section jk-alt">
+    <div class="jk-wrap">
+      <div class="jk-section-head jk-reveal">
+        <div class="jk-eyebrow">Community</div>
+        <h2>Built in the open</h2>
+      </div>
+      <div class="jk-proof-grid">
+        <div class="jk-stat-tile jk-reveal"><b>20+</b><span>contributors</span></div>
+        <div class="jk-stat-tile jk-reveal"><b>8</b><span>resource providers</span></div>
+        <div class="jk-stat-tile jk-reveal"><b>v1.x</b><span>stable and actively maintained</span></div>
+      </div>
+      <div class="jk-adopt-slot jk-reveal">
+        <p><b>Running Jikkou in production?</b> Tell us: your story helps the project more than anything.
+           Real-world usage reports guide the roadmap and help other teams adopt with confidence.</p>
+        <a href="https://github.com/streamthoughts/jikkou/discussions" target="_blank" rel="noopener">Share on GitHub Discussions →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="jk-final">
+    <div class="jk-wrap">
+      <h2>Your next topic is a pull request away.</h2>
+      <p>Install in one command. Export your existing cluster in ten minutes.</p>
+      <div class="jk-install-box">
+        <span class="jk-p">$</span>
+        <code id="jk-install-cmd">sdk install jikkou</code>
+        <button type="button" id="jk-copy-btn" aria-label="Copy install command">Copy</button>
+      </div>
+      <div class="jk-final-ctas">
+        <a class="jk-btn jk-btn-primary" href="/docs/">Read the docs →</a>
+        <a class="jk-btn jk-btn-ghost" href="https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA" target="_blank" rel="noopener">Join Slack</a>
+        <a class="jk-btn jk-btn-ghost" href="https://github.com/streamthoughts/jikkou" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  (function () {
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var words = document.querySelectorAll('.jk-hero-rotator .jk-word');
+    if (words.length > 1 && !reduced) {
+      var cur = 0;
+      setInterval(function () {
+        words[cur].classList.remove('active');
+        cur = (cur + 1) % words.length;
+        words[cur].classList.add('active');
+      }, 4200);
+    }
+
+    var targets = document.querySelectorAll('.jk-reveal');
+    if (reduced || !('IntersectionObserver' in window)) {
+      targets.forEach(function (t) { t.classList.add('in'); });
+    } else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.12 });
+      targets.forEach(function (t) { io.observe(t); });
+    }
+
+    var btn = document.getElementById('jk-copy-btn');
+    if (btn) {
+      btn.addEventListener('click', function () {
+        var text = document.getElementById('jk-install-cmd').textContent;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(function () {
+            btn.textContent = 'Copied ✓';
+            setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+          });
+        }
+      });
+    }
+  })();
+</script>
+{{ end }}

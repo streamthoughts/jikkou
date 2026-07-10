@@ -2,10 +2,10 @@
   <img src="./assets/jikkou-logo-title.png" alt="Jikkou Logo" width="400"/>
 </p>
 
-<h3 align="center">Resource as Code for Apache Kafka</h3>
+<h3 align="center">Resource as Code for Apache Kafka and beyond</h3>
 <p align="center">
-  Declare. Apply. Automate.<br/>
-  Manage your Kafka resources the same way you manage your infrastructure.
+  Topics, ACLs, schemas, quotas, and connectors: declared in Git, reconciled against your real clusters.<br/>
+  Kafka-first. Platform-ready.
 </p>
 
 <p align="center">
@@ -30,9 +30,15 @@
 
 ---
 
-**Jikkou** (jikkou / 実行 — *execution* in Japanese) is an open-source tool that lets you manage Apache Kafka resources declaratively using YAML files, the same way `kubectl` manages Kubernetes resources.
+**Your platform team runs Kafka for everyone else.** Fifty app teams, and every new topic is a ticket.
+Configs drift between staging and production because someone "fixed" something by hand during an incident.
+Nobody can say who changed what, or why.
 
-Stop writing scripts. Stop clicking through UIs. Define your desired state, and Jikkou makes it happen.
+**Jikkou** (jikkou / 実行, *execution* in Japanese) fixes this the way `kubectl` fixed Kubernetes:
+declare your Kafka resources (topics, ACLs, quotas, schemas, connectors) as YAML in Git, review changes
+in pull requests, and let Jikkou reconcile the desired state against your **real clusters**. Kafka-first,
+and platform-ready: the same engine manages Schema Registry, Kafka Connect, Confluent Cloud, Aiven,
+Amazon MSK, AWS Glue, and Apache Iceberg.
 
 <p align="center">
   <img src="./assets/demo.gif" alt="Jikkou in action" width="800"/>
@@ -40,15 +46,19 @@ Stop writing scripts. Stop clicking through UIs. Define your desired state, and 
 
 ## Why Jikkou?
 
-| | |
+| Your problem | Jikkou's answer |
 |---|---|
-| **Declarative** | Define Topics, ACLs, Schemas, Connectors, and Quotas as code in simple YAML files |
-| **GitOps-Ready** | Version-control your Kafka configuration and automate changes through CI/CD |
-| **Stateless** | No database needed — Jikkou uses your Kafka platform as the source of truth |
-| **Safe** | Built-in dry-run mode, validations, and reconciliation engine prevent accidents |
-| **Extensible** | Plugin-based architecture with providers, validators, transformations, and templates |
-| **Multi-Cluster** | Apply changes across a fleet of clusters in one command with provider groups |
-| **Multi-Platform** | Works with Apache Kafka, Confluent Cloud, Aiven, Amazon MSK, Redpanda, Apache Iceberg, and more |
+| "Someone changed a topic by hand and nobody noticed" | **Stateless reconciliation.** No state file; `jikkou diff` compares Git against the actual cluster, so drift is always visible |
+| "300 topics that differ by one value" | **Jinja templating.** One definition, per-environment values files |
+| "Same config must land on five clusters" | **Multi-cluster apply.** Provider groups target a whole fleet in one command |
+| "Every change needs review and an audit trail" | **GitOps-native.** YAML in Git, `diff` in the pull request, `apply` in CI |
+| "We can't let a typo reach production" | **Validations & dry-run.** Platform rules (naming, min ISR, partition limits) enforced before anything is applied |
+| "We also run Schema Registry, Connect, Iceberg…" | **One agnostic engine.** Pluggable providers, one resource model across your whole data platform |
+
+## How Jikkou Compares
+
+- **[Jikkou vs Terraform](https://www.jikkou.io/docs/comparisons/jikkou-vs-terraform/)**: Terraform provisions clusters; Jikkou manages what lives inside them, without a state file to drift.
+- **[Jikkou vs Strimzi Topic Operator](https://www.jikkou.io/docs/comparisons/jikkou-vs-strimzi/)**: on Strimzi, keep the Topic Operator for topics; Jikkou covers everything it can't reach.
 
 ## Quick Start
 
@@ -79,9 +89,13 @@ spec:
     min.insync.replicas: 2
 ```
 
-### Apply it
+### Preview, then apply
 
 ```bash
+# Preview the change against the real cluster, not a state file
+jikkou diff --files ./kafka-topics.yaml
+
+# Apply it
 jikkou apply --files ./kafka-topics.yaml
 ```
 
@@ -93,7 +107,11 @@ EXECUTION in 2s 661ms
 ok: 0, created: 1, altered: 0, deleted: 0, failed: 0
 ```
 
-## Supported Resources
+## One Model, Every Platform
+
+The same declarative YAML model covers your entire streaming platform. And because the engine is
+platform-agnostic, it extends beyond Kafka: Apache Iceberg tables, views, and namespaces are managed
+with the exact same workflow.
 
 | Apache Kafka | Schema Registry | Kafka Connect | Apache Iceberg | Cloud Providers |
 |:---:|:---:|:---:|:---:|:---:|
@@ -173,6 +191,7 @@ Want to see your name here? Check out the [contribution guide](./CONTRIBUTING.md
 
 If you find Jikkou useful, please consider:
 
+- **Using Jikkou in production?** [Tell us in GitHub Discussions](https://github.com/streamthoughts/jikkou/discussions): real-world usage reports help the project more than anything else
 - Giving it a **[star on GitHub](https://github.com/streamthoughts/jikkou)** to help others discover it
 - Joining the **[Slack community](https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA)** to ask questions and share feedback
 - **[Contributing](./CONTRIBUTING.md)** code, documentation, or bug reports
