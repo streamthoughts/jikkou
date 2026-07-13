@@ -1,0 +1,21 @@
+---
+# Enforce a naming convention on every KafkaTopic.
+#
+# This example requires kebab-case names (e.g. 'orders-events', 'payment-refunds').
+# Adjust the regex to your own convention, e.g. '^(europe|us|asia)-.+' to require
+# a region prefix, or '^[a-z]+\\.[a-z]+\\..+' for dot-separated domains.
+#
+# Usage: jikkou validate -f <resources> -f topic-naming-convention.yaml
+apiVersion: core.jikkou.io/v1
+kind: ValidatingResourcePolicy
+metadata:
+  name: TopicNamingConvention
+spec:
+  failurePolicy: FAIL
+  selector:
+    matchResources:
+      - kind: KafkaTopic
+  rules:
+    - name: TopicNameMustBeKebabCase
+      expression: "resource.metadata.name.matches('^[a-z0-9]+(-[a-z0-9]+)*$')"
+      messageExpression: "'Topic name must be kebab-case (lowercase alphanumerics and dashes), but was: ' + resource.metadata.name"

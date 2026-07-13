@@ -6,6 +6,8 @@
  */
 package io.jikkou.core;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,9 +19,18 @@ import io.jikkou.core.extension.DefaultExtensionFactory;
 import io.jikkou.core.extension.DefaultExtensionRegistry;
 import io.jikkou.core.extension.DefaultProviderConfigurationRegistry;
 import io.jikkou.core.models.ApiResourceChangeList;
+import io.jikkou.core.models.CoreAnnotations;
+import io.jikkou.core.models.ObjectMeta;
 import io.jikkou.core.models.ResourceList;
+import io.jikkou.core.models.change.GenericResourceChange;
+import io.jikkou.core.models.change.ResourceChange;
+import io.jikkou.core.models.change.ResourceChangeSpec;
+import io.jikkou.core.reconciler.ChangeResult;
+import io.jikkou.core.reconciler.DefaultChangeResult;
+import io.jikkou.core.reconciler.Operation;
 import io.jikkou.core.reconciler.ResourceChangeFilter;
 import io.jikkou.core.resource.DefaultResourceRegistry;
+import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -188,5 +199,76 @@ class DefaultApiMultiProviderTest {
 
         ApiResourceChangeList result = api.getDiff(ResourceList.empty(), new ResourceChangeFilter.Noop(), context);
         assertTrue(result.getItems().isEmpty());
+    }
+
+    @Test
+    void shouldNotMutateInputResourcesAcrossProviders() {
+        providerConfigRegistry.registerProviderConfiguration("provider-a", PROVIDER_TYPE, Configuration.empty(), false);
+        providerConfigRegistry.registerProviderConfiguration("provider-b", PROVIDER_TYPE, Configuration.empty(), false);
+        DefaultApi api = buildApi();
+
+        TestResource resource = new TestResource().withMetadata(new ObjectMeta("test"));
+        ReconciliationContext context = ReconciliationContext.builder()
+            .dryRun(true)
+            .providerNames(List.of("provider-a", "provider-b"))
+            .continueOnError(true)
+            .build();
+
+        api.getDiff(ResourceList.of(List.of(resource)), new ResourceChangeFilter.Noop(), context);
+
+        // The provider annotation must never leak onto the shared input resource: it would
+        // exclude the resource from the provider filter of every provider after the first.
+        assertTrue(resource.getMetadata().getAnnotations().isEmpty());
+    }
+
+    @Test
+    void shouldTagChangeWithProviderAnnotation() {
+        // Change with no metadata: exercises the copy-on-null behavior of GenericResourceChange.getMetadata()
+        ResourceChange change = changeWithOp(Operation.CREATE);
+
+        ResourceChange tagged = DefaultApi.tagChangeWithProvider(change, "kafka-prod");
+
+        assertEquals("kafka-prod", CoreAnnotations.getProvider(tagged));
+    }
+
+    @Test
+    void shouldNotOverrideExistingProviderAnnotationOnChanges() {
+        ObjectMeta meta = ObjectMeta.builder()
+            .withAnnotation(CoreAnnotations.JIKKOU_IO_PROVIDER, "upstream-provider")
+            .build();
+        ResourceChange change = (ResourceChange) changeWithOp(Operation.UPDATE).withMetadata(meta);
+
+        ResourceChange tagged = DefaultApi.tagChangeWithProvider(change, "kafka-prod");
+
+        assertEquals("upstream-provider", CoreAnnotations.getProvider(tagged));
+    }
+
+    @Test
+    void shouldTagChangeResultWithProviderAnnotation() {
+        ChangeResult result = ChangeResult.changed(changeWithOp(Operation.UPDATE), () -> "update topic");
+
+        ChangeResult tagged = DefaultApi.tagChangeResultWithProvider(result, "kafka-dev");
+
+        assertEquals("kafka-dev", CoreAnnotations.getProvider(tagged.change()));
+        assertEquals(result.status(), tagged.status());
+        assertEquals(result.description().textual(), tagged.description().textual());
+    }
+
+    @Test
+    void shouldKeepChangeResultUntouched_whenChangeIsNull() {
+        ChangeResult result = new DefaultChangeResult(Instant.now(), ChangeResult.Status.OK, null, () -> "noop", null);
+
+        ChangeResult tagged = DefaultApi.tagChangeResultWithProvider(result, "kafka-prod");
+
+        assertSame(result, tagged);
+    }
+
+    private static ResourceChange changeWithOp(Operation op) {
+        return GenericResourceChange.builder()
+            .withSpec(ResourceChangeSpec.builder()
+                .withOperation(op)
+                .build()
+            )
+            .build();
     }
 }

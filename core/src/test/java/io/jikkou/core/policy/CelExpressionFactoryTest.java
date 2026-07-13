@@ -70,6 +70,30 @@ class CelExpressionFactoryTest {
     }
 
     @Test
+    void shouldEvaluateNumericExpressionOnNonJsonNativeTypes() {
+        // Given: a resource carrying values typed as Short/Float, like V1KafkaTopic.spec.replicas.
+        var resource = new GenericResource(
+            "io.jikkou/v1",
+            "Test",
+            new ObjectMeta("TestName"),
+            null,
+            Map.of(
+                "spec", Map.of(
+                    "replicas", (short) 3,
+                    "ratio", 0.5f
+                )
+            )
+        );
+
+        // When
+        CelExpression<Boolean> compiled = CelExpressionFactory.bool()
+            .compile("resource.spec.replicas >= 3 && resource.spec.ratio < 1.0");
+
+        // Then
+        Assertions.assertTrue(compiled.eval(resource));
+    }
+
+    @Test
     void shouldCompileExpressionEvaluatingToFalse() {
         // Given
         var resource = new GenericResource(

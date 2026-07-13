@@ -137,6 +137,9 @@ Existing scripts that call the old flat form (`jikkou get topics`, `jikkou get k
 
 `--provider`, `--provider-all`, and `--provider-group` are mutually exclusive. None of them are required: if you have a single provider of each type, your existing commands keep working unchanged.
 
+For a complete walkthrough (configuration, per-cluster results, fleet-wide drift checks), see
+[Manage a fleet of Kafka clusters](/docs/how-to-guides/manage-kafka-fleet/).
+
 ### Output format options
 
 `-o/--output` now accepts `JSON`, `YAML`, or `TABLE` on list and get commands.

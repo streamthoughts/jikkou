@@ -829,7 +829,7 @@ function _picocli_jikkou_diff() {
   local prev_word=${COMP_WORDS[COMP_CWORD-1]}
 
   local commands=""
-  local flag_opts="'--provider-all' '--continue-on-error' '--list' '-h' '--help' '-V' '--version'"
+  local flag_opts="'--provider-all' '--continue-on-error' '--list' '--fail-on-changes' '-h' '--help' '-V' '--version'"
   local arg_opts="'--logger-level' '--files' '-f' '--file-name' '-n' '--values-files' '--values-file-name' '--set-label' '-l' '--set-annotation' '--set-value' '-v' '--selector' '-s' '--selector-match' '--output' '-o' '--options' '--provider' '--provider-group' '--filter-resource-op' '--filter-change-op'"
   local selectorMatchingStrategy_option_args=("NONE" "ALL" "ANY") # --selector-match values
   local format_option_args=("JSON" "YAML") # --output values

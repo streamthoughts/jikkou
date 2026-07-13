@@ -191,7 +191,7 @@ Want to see your name here? Check out the [contribution guide](./CONTRIBUTING.md
 
 If you find Jikkou useful, please consider:
 
-- **Using Jikkou in production?** [Tell us in GitHub Discussions](https://github.com/streamthoughts/jikkou/discussions): real-world usage reports help the project more than anything else
+- **Using Jikkou in production?** Add your organization to [ADOPTERS.md](./ADOPTERS.md) or [tell us in GitHub Discussions](https://github.com/streamthoughts/jikkou/discussions): real-world usage reports help the project more than anything else
 - Giving it a **[star on GitHub](https://github.com/streamthoughts/jikkou)** to help others discover it
 - Joining the **[Slack community](https://join.slack.com/t/jikkou-io/shared_invite/zt-27c0pt61j-F10NN7d7ZEppQeMMyvy3VA)** to ask questions and share feedback
 - **[Contributing](./CONTRIBUTING.md)** code, documentation, or bug reports

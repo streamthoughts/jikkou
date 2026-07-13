@@ -1,0 +1,22 @@
+---
+# Abort any reconciliation that would DELETE a Kafka topic.
+#
+# This policy matches change resources (KafkaTopicChange), not topic
+# definitions: it inspects the operations Jikkou is about to execute.
+# With failurePolicy FAIL the whole run is aborted with an error; change
+# it to FILTER to silently skip deletions and apply everything else.
+#
+# Usage: jikkou apply -f <resources> -f block-topic-deletes.yaml
+apiVersion: core.jikkou.io/v1
+kind: ValidatingResourcePolicy
+metadata:
+  name: BlockTopicDeletes
+spec:
+  failurePolicy: FAIL
+  selector:
+    matchResources:
+      - kind: KafkaTopicChange
+  rules:
+    - name: DenyDeleteOperation
+      expression: "resource.spec.op != 'DELETE'"
+      messageExpression: "'Deleting topics through reconciliation is not authorized (topic: ' + resource.metadata.name + ')'"

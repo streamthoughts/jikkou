@@ -113,7 +113,16 @@ public final class CelExpressionFactory<T> {
         // Evaluate the program
         return resource -> {
             try {
-                Map<String, Object> json = Jackson.json().convertValue(resource, Map.class);
+                // Serialize through JSON (not convertValue) so that every scalar is
+                // normalized to a JSON-native Java type: convertValue would preserve
+                // POJO field types such as Short (e.g. KafkaTopic spec.replicas) that
+                // the CEL runtime cannot adapt, breaking numeric expressions.
+                final Map<String, Object> json;
+                try {
+                    json = Jackson.json().readValue(Jackson.json().writeValueAsBytes(resource), Map.class);
+                } catch (java.io.IOException e) {
+                    throw new IllegalArgumentException("Failed to serialize resource for CEL evaluation", e);
+                }
 
                 // Plan the program
                 final CelRuntime.Program program;

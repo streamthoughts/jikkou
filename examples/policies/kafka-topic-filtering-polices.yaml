@@ -9,8 +9,8 @@ spec:
   failurePolicy: FILTER
   selector:
     matchResources:
-      - kinds: KafkaTopicChange
+      - kind: KafkaTopicChange
   rules:
     - name: FilterDeleteOperation
-      expression: "size(resource.spec.changes) > 0 && resource.spec.op == 'DELETE'"
-      messageExpression: "'Operation ' + resource.spec.op + '  on topics is not authorized'"
+      expression: "resource.spec.op != 'DELETE'"
+      messageExpression: "'Operation ' + resource.spec.op + ' on topics is not authorized'"

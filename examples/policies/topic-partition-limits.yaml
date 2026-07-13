@@ -1,0 +1,23 @@
+---
+# Keep KafkaTopic partition counts within platform limits.
+#
+# Too few partitions limits consumer parallelism; too many wastes broker
+# resources and slows recovery. Adjust the bounds to your platform sizing.
+#
+# Usage: jikkou validate -f <resources> -f topic-partition-limits.yaml
+apiVersion: core.jikkou.io/v1
+kind: ValidatingResourcePolicy
+metadata:
+  name: TopicPartitionLimits
+spec:
+  failurePolicy: FAIL
+  selector:
+    matchResources:
+      - kind: KafkaTopic
+  rules:
+    - name: MinTopicPartitions
+      expression: "resource.spec.partitions >= 3"
+      messageExpression: "'Topic must have at least 3 partitions, but was: ' + string(resource.spec.partitions)"
+    - name: MaxTopicPartitions
+      expression: "resource.spec.partitions <= 50"
+      messageExpression: "'Topic must have at most 50 partitions, but was: ' + string(resource.spec.partitions)"

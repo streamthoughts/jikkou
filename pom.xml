@@ -424,6 +424,10 @@
                                         <manifestEntries>
                                             <Implementation-Title>Jikkou</Implementation-Title>
                                             <Implementation-Version>${project.version}</Implementation-Version>
+                                            <!-- Required so multi-release dependencies (e.g. dnsjava's
+                                                 java.net.spi.InetAddressResolverProvider) stay loadable
+                                                 from the shaded jar. -->
+                                            <Multi-Release>true</Multi-Release>
                                         </manifestEntries>
                                     </transformer>
                                 </transformers>

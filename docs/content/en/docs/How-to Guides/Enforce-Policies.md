@@ -20,11 +20,15 @@ For the broader picture, see [Validations]({{% relref "/docs/Concepts/validation
 
 ## 1. Write a policy
 
-A policy selects the resources it applies to and defines rules. Each rule's `expression` fails when it
-evaluates to `true`. The `failurePolicy` decides what happens on failure:
+A policy selects the resources it applies to and defines rules. Each rule's `expression` is a CEL
+assertion that must hold for the resource to be valid: the rule fails when the expression evaluates
+to `false` (the same convention as Kubernetes ValidatingAdmissionPolicy). The `failurePolicy` decides
+what happens on failure:
 
-* `FAIL` — abort the operation with an error.
-* `FILTER` — silently drop the invalid resource(s) and continue.
+* `FAIL`: abort the operation with an error.
+* `FILTER`: silently drop the invalid resource(s) and continue.
+* `CONTINUE`: report the violation but let the resource proceed. Useful to introduce a new rule in
+  "warning mode" before making it blocking.
 
 _`file: policy-topics.yaml`_
 
@@ -41,10 +45,10 @@ spec:
       - kind: KafkaTopic
   rules:
     - name: MaxTopicPartitions
-      expression: "resource.spec.partitions > 50"
+      expression: "resource.spec.partitions <= 50"
       messageExpression: "'Topic partitions MUST be <= 50, but was: ' + string(resource.spec.partitions)"
     - name: MinTopicPartitions
-      expression: "resource.spec.partitions < 3"
+      expression: "resource.spec.partitions >= 3"
       message: "Topic must have at least 3 partitions"
 ```
 
@@ -77,7 +81,7 @@ spec:
       - kind: KafkaTopicChange
   rules:
     - name: FilterDeleteOperation
-      expression: "resource.spec.op == 'DELETE'"
+      expression: "resource.spec.op != 'DELETE'"
       messageExpression: "'Operation ' + resource.spec.op + ' on topics is not authorized'"
 ```
 
@@ -97,10 +101,49 @@ selector:
       values: ["prod"]
 ```
 
-## Reuse policies across environments
+## Policy library
 
-Store policies in a [resource repository]({{% relref "/docs/Concepts/repositories.md" %}}) so they are injected
-automatically and shared across teams and environments, instead of passing them on every command.
+Ready-made policies you can copy and adapt live in
+[`examples/policies/`](https://github.com/streamthoughts/jikkou/tree/main/examples/policies):
+
+| Policy | What it enforces |
+|--------|------------------|
+| `topic-naming-convention.yaml` | Topic names follow a convention (kebab-case by default; adapt the regex) |
+| `topic-min-insync-replicas.yaml` | `min.insync.replicas` is set explicitly and is at least 2 |
+| `topic-min-replication-factor.yaml` | Replication factor is declared and at least 3 |
+| `topic-partition-limits.yaml` | Partition count stays within platform bounds (3 to 50 by default) |
+| `require-owner-label.yaml` | Every topic carries an `owner` label |
+| `block-topic-deletes.yaml` | Reconciliation may never delete a topic (matches change resources) |
+
+## Centrally enforce policies for all teams
+
+Passing policy files on every command works for one team, but a platform team usually wants policies
+applied to **every** run, no matter which files an application team passes. Configure a
+[resource repository]({{% relref "/docs/Concepts/repositories.md" %}}) in the shared Jikkou context:
+repository resources are injected automatically into each execution.
+
+```hocon
+jikkou {
+  repositories = [
+    {
+      name = "platform-policies"
+      type = io.jikkou.core.repository.GitHubResourceRepository
+      config {
+        repository = "my-org/kafka-platform-policies"
+        branch = "main"
+        paths = [ "policies/" ]
+        # Access token for private repositories
+        token = ${?GITHUB_TOKEN}
+      }
+    }
+  ]
+}
+```
+
+With this configuration in the context used by CI (or by the Jikkou API server), an application
+team running `jikkou apply -f ./my-topics.yaml` gets the platform policies evaluated on every
+resource and every change, without ever seeing the policy files. Updating a rule is a pull
+request on the central policies repository, immediately effective for all teams.
 
 ## Related
 

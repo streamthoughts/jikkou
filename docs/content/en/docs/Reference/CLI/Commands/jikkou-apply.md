@@ -47,6 +47,12 @@ jikkou apply -f my-resources.yaml --options delete-orphans=true
 # Apply targeting a specific provider
 jikkou apply -f my-resources.yaml --provider kafka-prod
 
+# Apply to a named group of providers (a fleet of clusters) in one command
+jikkou apply -f my-resources.yaml --provider-group kafka-prod-fleet
+
+# Apply to all provider instances, continuing when one fails
+jikkou apply -f my-resources.yaml --provider-all --continue-on-error
+
 # Apply with JSON output format
 jikkou apply -f my-resources.yaml -o JSON --pretty
 ```
@@ -66,6 +72,9 @@ jikkou apply -f my-resources.yaml -o JSON --pretty
 | `--selector-match` | | `ALL` | Selector matching strategy. Valid values: ALL, ANY, NONE |
 | `--options` | | | Controller configuration options (key=value, repeatable) |
 | `--provider` | | | Select a specific provider instance |
+| `--provider-group` | | | Target a named group of providers (see `provider-groups` config). Mutually exclusive with `--provider` and `--provider-all` |
+| `--provider-all` | | `false` | Target all registered provider instances. Mutually exclusive with `--provider` and `--provider-group` |
+| `--continue-on-error` | | `false` | In multi-provider runs, continue with remaining providers when one fails (default is fail-fast) |
 | `--output` | `-o` | `TEXT` | Output format. Valid values: TEXT, COMPACT, JSON, YAML |
 | `--pretty` | | `false` | Pretty print JSON output |
 | `--dry-run` | | `false` | Execute command in dry-run mode (preview changes without applying) |

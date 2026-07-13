@@ -63,6 +63,7 @@ import io.jikkou.core.policy.model.ValidatingResourcePolicy;
 import io.jikkou.core.reconciler.ChangeResult;
 import io.jikkou.core.reconciler.Collector;
 import io.jikkou.core.reconciler.Controller;
+import io.jikkou.core.reconciler.DefaultChangeResult;
 import io.jikkou.core.reconciler.Operation;
 import io.jikkou.core.reconciler.Reconciler;
 import io.jikkou.core.reconciler.ResourceChangeFilter;
@@ -634,7 +635,9 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
 
             try {
                 ApiChangeResultList result = operation.execute(resources, singleContext);
-                aggregatedResults.addAll(result.results());
+                result.results().stream()
+                    .map(r -> tagChangeResultWithProvider(r, providerName))
+                    .forEach(aggregatedResults::add);
             } catch (Exception e) {
                 LOG.error("{} failed for provider '{}': {}", operationName, providerName, e.getMessage(), e);
                 failedProviders.add(providerName);
@@ -657,6 +660,49 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
     @FunctionalInterface
     private interface MultiProviderOperation {
         ApiChangeResultList execute(@NotNull HasItems resources, @NotNull ReconciliationContext context);
+    }
+
+    /**
+     * Tags the given change with the provider it was computed for, using the
+     * {@link CoreAnnotations#JIKKOU_IO_PROVIDER} metadata annotation. An annotation already
+     * set upstream is never overridden.
+     *
+     * @param change       the resource change.
+     * @param providerName the provider name.
+     * @return the annotated change.
+     * @since 1.1.0
+     */
+    static ResourceChange tagChangeWithProvider(@NotNull ResourceChange change,
+                                                @NotNull String providerName) {
+        // getMetadata() returns a detached copy when the metadata field is null:
+        // the metadata must be re-attached through withMetadata().
+        ObjectMeta meta = change.getMetadata();
+        meta.addAnnotationIfAbsent(CoreAnnotations.JIKKOU_IO_PROVIDER, providerName);
+        return (ResourceChange) change.withMetadata(meta);
+    }
+
+    /**
+     * Tags the change carried by the given result with the provider it was executed for.
+     *
+     * @param result       the change result.
+     * @param providerName the provider name.
+     * @return the annotated result.
+     * @since 1.1.0
+     */
+    static ChangeResult tagChangeResultWithProvider(@NotNull ChangeResult result,
+                                                    @NotNull String providerName) {
+        if (result.change() == null) {
+            return result;
+        }
+        // Custom ChangeResult implementations are normalized to DefaultChangeResult, the
+        // single declared deserialization target.
+        return new DefaultChangeResult(
+            result.end(),
+            result.status(),
+            tagChangeWithProvider(result.change(), providerName),
+            result.description(),
+            result.errors()
+        );
     }
 
     @NotNull
@@ -915,7 +961,9 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
             try {
                 ResourceList<HasMetadata> all = addAllResourcesFromRepositories(resources);
                 ApiResourceChangeList result = doDiff(all, filter, singleContext);
-                aggregatedChanges.addAll(result.getItems());
+                result.getItems().stream()
+                    .map(change -> tagChangeWithProvider(change, providerName))
+                    .forEach(aggregatedChanges::add);
             } catch (Exception e) {
                 LOG.error("Diff failed for provider '{}': {}", providerName, e.getMessage(), e);
                 if (!context.continueOnError()) {
@@ -956,13 +1004,6 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                 .toList();
         }
 
-        // Tag resources with provider annotation for audit trail
-        if (providerName != null) {
-            for (HasMetadata resource : list) {
-                resource.getMetadata().addAnnotationIfAbsent(CoreAnnotations.JIKKOU_IO_PROVIDER, providerName);
-            }
-        }
-
         ResourceList filtered = ResourceList.of(list);
 
         // Validate resources.
@@ -989,6 +1030,11 @@ public final class DefaultApi extends BaseApi implements AutoCloseable, JikkouAp
                 return filter.filter(changes);
             })
             .flatMap(Collection::stream)
+            // Tag planned changes with the provider for audit trail. The input resources
+            // are deliberately left untouched: multi-provider runs reuse the same resource
+            // instances for every provider, and a mutated provider annotation would exclude
+            // them from the provider filter above on the next iteration.
+            .map(change -> providerName != null ? tagChangeWithProvider(change, providerName) : change)
             .collect(Collectors.toList());
         return new ApiResourceChangeList(results);
     }
