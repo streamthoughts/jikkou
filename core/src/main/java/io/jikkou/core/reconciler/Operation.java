@@ -47,4 +47,14 @@ public enum Operation {
         return UPDATE == this || CREATE == this;
     }
 
+    /**
+     * Checks whether this operation results in a state change, i.e., any operation other than {@link #NONE}.
+     *
+     * @return {@code true} if this operation is {@link #CREATE}, {@link #UPDATE}, {@link #DELETE}, or {@link #REPLACE}.
+     * @since 1.1.0
+     */
+    public boolean isChanged() {
+        return this != NONE;
+    }
+
 }

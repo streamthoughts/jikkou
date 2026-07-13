@@ -52,3 +52,8 @@ This Action additionally supports the following inputs :
 |------------------|----------|--------------------------------------------------------------------------------------------------------------------------------|
 | `jikkou_version` | `latest` | The version of Jikkou CLI to install. A value of `latest` will install the latest version of Jikkou CLI.                       |
 | `jikkou_config`  |          | The path to the Jikkou CLI config file. If set, Jikkou CLI will be configured through the `JIKKOUCONFIG` environment variable. |
+
+## See also
+
+* [Detect configuration drift](/docs/how-to-guides/automating/detect-configuration-drift/): a
+  scheduled workflow that alerts when your clusters no longer match Git.

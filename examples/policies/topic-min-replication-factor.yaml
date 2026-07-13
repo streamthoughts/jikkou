@@ -1,0 +1,24 @@
+---
+# Require every KafkaTopic to declare a replication factor of at least 3.
+#
+# A replication factor below 3 cannot tolerate a broker failure during a
+# rolling restart. The rule also fails when replicas is not set explicitly,
+# so topics cannot silently fall back to a weaker cluster default.
+#
+# Usage: jikkou validate -f <resources> -f topic-min-replication-factor.yaml
+apiVersion: core.jikkou.io/v1
+kind: ValidatingResourcePolicy
+metadata:
+  name: TopicMinReplicationFactor
+spec:
+  failurePolicy: FAIL
+  selector:
+    matchResources:
+      - kind: KafkaTopic
+  rules:
+    - name: ReplicationFactorMustBeSet
+      expression: "has(resource.spec.replicas)"
+      message: "Topic must explicitly declare spec.replicas"
+    - name: ReplicationFactorMustBeAtLeastThree
+      expression: "!has(resource.spec.replicas) || int(resource.spec.replicas) >= 3"
+      messageExpression: "'Topic replication factor must be >= 3, but was: ' + string(resource.spec.replicas)"

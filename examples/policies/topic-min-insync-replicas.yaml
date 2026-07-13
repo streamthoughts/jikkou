@@ -1,0 +1,23 @@
+---
+# Require every KafkaTopic to explicitly set min.insync.replicas >= 2.
+#
+# Protects against data loss on broker failure: with acks=all, producers get an
+# error instead of silently writing to a single in-sync replica.
+#
+# Usage: jikkou validate -f <resources> -f topic-min-insync-replicas.yaml
+apiVersion: core.jikkou.io/v1
+kind: ValidatingResourcePolicy
+metadata:
+  name: TopicMinInSyncReplicas
+spec:
+  failurePolicy: FAIL
+  selector:
+    matchResources:
+      - kind: KafkaTopic
+  rules:
+    - name: MinInSyncReplicasMustBeSet
+      expression: "has(resource.spec.configs) && 'min.insync.replicas' in resource.spec.configs"
+      message: "Topic must explicitly set the min.insync.replicas config"
+    - name: MinInSyncReplicasMustBeAtLeastTwo
+      expression: "!has(resource.spec.configs) || !('min.insync.replicas' in resource.spec.configs) || int(resource.spec.configs['min.insync.replicas']) >= 2"
+      messageExpression: "'min.insync.replicas must be >= 2, but was: ' + string(resource.spec.configs['min.insync.replicas'])"

@@ -18,4 +18,13 @@ class OperationTest {
         Assertions.assertEquals("Update", Operation.UPDATE.humanize());
         Assertions.assertEquals("Unchanged", Operation.NONE.humanize());
     }
+
+    @Test
+    void shouldReturnChangedForAllOperationsExceptNone() {
+        Assertions.assertFalse(Operation.NONE.isChanged());
+        Assertions.assertTrue(Operation.CREATE.isChanged());
+        Assertions.assertTrue(Operation.UPDATE.isChanged());
+        Assertions.assertTrue(Operation.DELETE.isChanged());
+        Assertions.assertTrue(Operation.REPLACE.isChanged());
+    }
 }

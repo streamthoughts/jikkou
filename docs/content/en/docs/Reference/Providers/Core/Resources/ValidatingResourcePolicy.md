@@ -22,7 +22,7 @@ kind: ValidatingResourcePolicy
 metadata:
   name: <string> # Required. Unique policy name.
 spec:
-  failurePolicy: <string> # Required. One of: FAIL | FILTER
+  failurePolicy: <string> # Required. One of: FAIL | FILTER | CONTINUE
   selector:
     matchingStrategy: <string> # Optional. One of: ALL | ANY (default: ALL)
     matchResources:
@@ -36,7 +36,7 @@ spec:
       - <string> # CEL expression
   rules:
     - name: <string> # Required. Rule identifier.
-      expression: <string> # Required. A CEL expression evaluated against the resource.
+      expression: <string> # Required. A CEL assertion that must evaluate to true for the resource to be valid.
       message: <string> # Optional. Static message returned when the rule fails.
       messageExpression: <string> # Optional. CEL expression to generate a dynamic error message.
 ```
@@ -47,14 +47,14 @@ spec:
 
 | Field                            | Type     | Required | Description                                                                                                                                                                                         |
 |----------------------------------|----------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `spec.failurePolicy`             | `string` | Yes      | Defines the policy behavior when validation fails. Possible values:<br/>• `FAIL` → stop execution with an error.<br/>• `FILTER` → skip the invalid resource(s) but continue processing others.      |
+| `spec.failurePolicy`             | `string` | Yes      | Defines the policy behavior when validation fails. Possible values:<br/>• `FAIL` → stop execution with an error.<br/>• `FILTER` → skip the invalid resource(s) but continue processing others.<br/>• `CONTINUE` → report the violation but let the resource proceed (warning mode).      |
 | `spec.selector.matchingStrategy` | `string` | No       | Strategy for combining multiple selectors. Possible values:<br/>• `ALL` → resource must match **all** conditions.<br/>• `ANY` → resource must match **at least one** condition.<br/>Default: `ALL`. |
 | `spec.selector.matchResources`   | `list`   | No       | Selects resources by API version and kind.                                                                                                                                                          |
 | `spec.selector.matchLabels`      | `list`   | No       | Selects resources based on labels, using operators (`In`, `NotIn`, `Exists`, `DoesNotExist`).                                                                                                       |
 | `spec.selector.matchExpressions` | `list`   | No       | Selects resources using CEL expressions for advanced filtering.                                                                                                                                     |
 | `spec.rules`                     | `list`   | Yes      | A list of validation rules.                                                                                                                                                                         |
 | `spec.rules[].name`              | `string` | Yes      | A unique identifier for the rule.                                                                                                                                                                   |
-| `spec.rules[].expression`        | `string` | Yes      | A CEL expression evaluated against the resource. The rule fails when the expression evaluates to `true`.                                                                                            |
+| `spec.rules[].expression`        | `string` | Yes      | A CEL assertion evaluated against the resource. The rule fails when the expression evaluates to `false`, i.e., the expression states what must hold for the resource to be valid.                    |
 | `spec.rules[].message`           | `string` | No       | Static error message returned when validation fails.                                                                                                                                                |
 | `spec.rules[].messageExpression` | `string` | No       | CEL expression returning a dynamic error message string.                                                                                                                                            |
 
@@ -154,7 +154,7 @@ spec:
       - kind: KafkaTopicChange
   rules:
     - name: FilterDeleteOperation
-      expression: "size(resource.spec.changes) > 0 && resource.spec.op == 'DELETE'"
+      expression: "resource.spec.op != 'DELETE'"
       messageExpression: "'Operation ' + resource.spec.op + ' on topics is not authorized'"
 ```
 
@@ -176,11 +176,11 @@ spec:
       - kind: KafkaTopic
   rules:
     - name: MaxTopicPartitions
-      expression: "resource.spec.partitions >= 50"
+      expression: "resource.spec.partitions < 50"
       messageExpression: "'Topic partition MUST be inferior to 50, but was: ' + string(resource.spec.partitions)"
 
     - name: MinTopicPartitions
-      expression: "resource.spec.partitions < 3"
+      expression: "resource.spec.partitions >= 3"
       message: "Topic must have at-least 3 partitions"
 ```
 

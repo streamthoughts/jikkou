@@ -31,7 +31,8 @@ $ jikkou diff --files ./topics/
 ```
 
 Out-of-band changes show up immediately as a diff. Reverting them is `jikkou apply`. Detecting them
-continuously is a scheduled CI job.
+continuously is a [scheduled CI job](/docs/how-to-guides/automating/detect-configuration-drift/)
+using `jikkou diff --fail-on-changes`.
 
 ## Managing 300 topics
 

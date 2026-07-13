@@ -1,0 +1,21 @@
+---
+# Require every KafkaTopic to carry an 'owner' label.
+#
+# Ownership metadata is what turns an incident ("who do we page about this
+# topic?") into a lookup. Combine with labels like 'team' or 'cost-center'
+# as needed.
+#
+# Usage: jikkou validate -f <resources> -f require-owner-label.yaml
+apiVersion: core.jikkou.io/v1
+kind: ValidatingResourcePolicy
+metadata:
+  name: RequireOwnerLabel
+spec:
+  failurePolicy: FAIL
+  selector:
+    matchResources:
+      - kind: KafkaTopic
+  rules:
+    - name: OwnerLabelMustBePresent
+      expression: "has(resource.metadata.labels) && 'owner' in resource.metadata.labels"
+      messageExpression: "'Topic ' + resource.metadata.name + ' must declare an owner label'"
