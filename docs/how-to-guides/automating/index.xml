@@ -6,4 +6,38 @@ sets up Jikkou in your &lt;strong>GitHub Actions&lt;/strong> workflow by:&lt;/p>
 &lt;li>Configuring &lt;strong>JIKKOU CLI&lt;/strong> with a custom configuration file.&lt;/li>
 &lt;/ul>
 &lt;p>After you&amp;rsquo;ve used the action, subsequent steps in the same job can run arbitrary Jikkou commands using the GitHub
-Actions run syntax. This allows most Jikkou commands to work exactly like they do on your local command line.&lt;/p></description></item></channel></rss>
+Actions run syntax. This allows most Jikkou commands to work exactly like they do on your local command line.&lt;/p></description></item><item><title>Detect Configuration Drift</title><link>https://www.jikkou.io/docs/how-to-guides/automating/detect-configuration-drift/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/automating/detect-configuration-drift/</guid><description>&lt;p>Configuration drift happens to every Kafka platform: someone bumps &lt;code>retention.ms&lt;/code> during an
+incident with a vendor UI, a topic gets created by hand, an ACL is &amp;ldquo;temporarily&amp;rdquo; widened.
+Because Jikkou is stateless and always compares your Git-versioned definitions against the
+&lt;strong>actual cluster state&lt;/strong>, detecting drift is a single command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">jikkou diff --files ./resources --fail-on-changes
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="exit-codes">Exit codes&lt;/h2>
+&lt;p>With &lt;code>--fail-on-changes&lt;/code>, &lt;code>jikkou diff&lt;/code> uses distinct exit codes so CI can react precisely:&lt;/p>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>Code&lt;/th>
+ &lt;th>Meaning&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>&lt;code>0&lt;/code>&lt;/td>
+ &lt;td>No changes: cluster matches Git&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>1&lt;/code>&lt;/td>
+ &lt;td>Validation or execution error&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>2&lt;/code>&lt;/td>
+ &lt;td>Usage error (invalid flags or arguments)&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>3&lt;/code>&lt;/td>
+ &lt;td>&lt;strong>Drift detected&lt;/strong>: at least one pending change&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;p>A one-line summary is printed to stderr (for example, &lt;code>3 changes detected: 1 CREATE, 2 UPDATE&lt;/code>),
+while stdout carries the full machine-readable diff (YAML by default, &lt;code>-o JSON&lt;/code> available).&lt;/p></description></item></channel></rss>

@@ -527,7 +527,41 @@ configuration:&lt;/p>
 }
 &lt;/code>&lt;/pre>&lt;h3 id="step-2-check-connection">Step 2: Check connection&lt;/h3>
 &lt;p>When enabling Proxy Mode, Jikkou CLI provides the additional command &lt;code>server-info&lt;/code>. You can use it to verify the
-connectivity with teh server.&lt;/p></description></item><item><title>Jikkou Selectors</title><link>https://www.jikkou.io/docs/concepts/selectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/selectors/</guid><description>&lt;div class="pageinfo pageinfo-info">
+connectivity with teh server.&lt;/p></description></item><item><title>Detect Configuration Drift</title><link>https://www.jikkou.io/docs/how-to-guides/automating/detect-configuration-drift/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/automating/detect-configuration-drift/</guid><description>&lt;p>Configuration drift happens to every Kafka platform: someone bumps &lt;code>retention.ms&lt;/code> during an
+incident with a vendor UI, a topic gets created by hand, an ACL is &amp;ldquo;temporarily&amp;rdquo; widened.
+Because Jikkou is stateless and always compares your Git-versioned definitions against the
+&lt;strong>actual cluster state&lt;/strong>, detecting drift is a single command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">jikkou diff --files ./resources --fail-on-changes
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="exit-codes">Exit codes&lt;/h2>
+&lt;p>With &lt;code>--fail-on-changes&lt;/code>, &lt;code>jikkou diff&lt;/code> uses distinct exit codes so CI can react precisely:&lt;/p>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>Code&lt;/th>
+ &lt;th>Meaning&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>&lt;code>0&lt;/code>&lt;/td>
+ &lt;td>No changes: cluster matches Git&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>1&lt;/code>&lt;/td>
+ &lt;td>Validation or execution error&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>2&lt;/code>&lt;/td>
+ &lt;td>Usage error (invalid flags or arguments)&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>3&lt;/code>&lt;/td>
+ &lt;td>&lt;strong>Drift detected&lt;/strong>: at least one pending change&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;p>A one-line summary is printed to stderr (for example, &lt;code>3 changes detected: 1 CREATE, 2 UPDATE&lt;/code>),
+while stdout carries the full machine-readable diff (YAML by default, &lt;code>-o JSON&lt;/code> available).&lt;/p></description></item><item><title>Jikkou Selectors</title><link>https://www.jikkou.io/docs/concepts/selectors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/concepts/selectors/</guid><description>&lt;div class="pageinfo pageinfo-info">
 &lt;p>&lt;strong>Selectors&lt;/strong> allow you to include or exclude resource objects when returned or reconciled by Jikkou.&lt;/p>
 
 &lt;/div>
@@ -1347,7 +1381,7 @@ Rules can either &lt;strong>fail&lt;/strong> the execution or &lt;strong>filter&
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;string&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Required. Unique policy name.&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">spec&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">failurePolicy: &amp;lt;string&amp;gt; # Required. One of&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">FAIL | FILTER&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">failurePolicy: &amp;lt;string&amp;gt; # Required. One of&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">FAIL | FILTER | CONTINUE&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">selector&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">matchingStrategy: &amp;lt;string&amp;gt; # Optional. One of: ALL | ANY (default&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ALL)&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">matchResources&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
@@ -1361,7 +1395,7 @@ Rules can either &lt;strong>fail&lt;/strong> the execution or &lt;strong>filter&
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="l">&amp;lt;string&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># CEL expression&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">rules&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;string&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Required. Rule identifier.&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">expression&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;string&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Required. A CEL expression evaluated against the resource.&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">expression&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;string&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Required. A CEL assertion that must evaluate to true for the resource to be valid.&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">message&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;string&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Optional. Static message returned when the rule fails.&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">messageExpression&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;string&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Optional. CEL expression to generate a dynamic error message.&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
@@ -1380,7 +1414,7 @@ Rules can either &lt;strong>fail&lt;/strong> the execution or &lt;strong>filter&
  &lt;td>&lt;code>spec.failurePolicy&lt;/code>&lt;/td>
  &lt;td>&lt;code>string&lt;/code>&lt;/td>
  &lt;td>Yes&lt;/td>
- &lt;td>Defines the policy behavior when validation fails. Possible values:&lt;br/>• &lt;code>FAIL&lt;/code> → stop execution with an error.&lt;br/>• &lt;code>FILTER&lt;/code> → skip the invalid resource(s) but continue processing others.&lt;/td>
+ &lt;td>Defines the policy behavior when validation fails. Possible values:&lt;br/>• &lt;code>FAIL&lt;/code> → stop execution with an error.&lt;br/>• &lt;code>FILTER&lt;/code> → skip the invalid resource(s) but continue processing others.&lt;br/>• &lt;code>CONTINUE&lt;/code> → report the violation but let the resource proceed (warning mode).&lt;/td>
  &lt;/tr>
  &lt;tr>
  &lt;td>&lt;code>spec.selector.matchingStrategy&lt;/code>&lt;/td>
@@ -1422,7 +1456,7 @@ Rules can either &lt;strong>fail&lt;/strong> the execution or &lt;strong>filter&
  &lt;td>&lt;code>spec.rules[].expression&lt;/code>&lt;/td>
  &lt;td>&lt;code>string&lt;/code>&lt;/td>
  &lt;td>Yes&lt;/td>
- &lt;td>A CEL expression evaluated against the resource. The rule fails when the expression evaluates to &lt;code>true&lt;/code>.&lt;/td>
+ &lt;td>A CEL assertion evaluated against the resource. The rule fails when the expression evaluates to &lt;code>false&lt;/code>, i.e., the expression states what must hold for the resource to be valid.&lt;/td>
  &lt;/tr>
  &lt;tr>
  &lt;td>&lt;code>spec.rules[].message&lt;/code>&lt;/td>
@@ -1666,8 +1700,19 @@ For the broader picture, see &lt;a href="https://www.jikkou.io/docs/concepts/val
 &lt;li>A Jikkou context configured for your platform — see &lt;a href="https://www.jikkou.io/docs/tutorials/get_started/">Getting Started&lt;/a>.&lt;/li>
 &lt;/ul>
 &lt;h2 id="1-write-a-policy">1. Write a policy&lt;/h2>
-&lt;p>A policy selects the resources it applies to and defines rules. Each rule&amp;rsquo;s &lt;code>expression&lt;/code> fails when it
-evaluates to &lt;code>true&lt;/code>. The &lt;code>failurePolicy&lt;/code> decides what happens on failure:&lt;/p></description></item><item><title>Jikkou - API References</title><link>https://www.jikkou.io/docs/reference/api-server/api-references/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/reference/api-server/api-references/</guid><description/></item><item><title>jikkou action</title><link>https://www.jikkou.io/docs/reference/cli/commands/jikkou-action/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/reference/cli/commands/jikkou-action/</guid><description>&lt;p>List and execute actions.&lt;/p>
+&lt;p>A policy selects the resources it applies to and defines rules. Each rule&amp;rsquo;s &lt;code>expression&lt;/code> is a CEL
+assertion that must hold for the resource to be valid: the rule fails when the expression evaluates
+to &lt;code>false&lt;/code> (the same convention as Kubernetes ValidatingAdmissionPolicy). The &lt;code>failurePolicy&lt;/code> decides
+what happens on failure:&lt;/p></description></item><item><title>Manage a Fleet of Kafka Clusters</title><link>https://www.jikkou.io/docs/how-to-guides/manage-kafka-fleet/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/manage-kafka-fleet/</guid><description>&lt;p>Most Kafka estates are fleets: a production cluster per region, staging, and often a mix of
+on-premises and managed services. Jikkou applies one declarative model across all of them:
+define each cluster as a named provider instance, group them, and target the group in one
+command.&lt;/p>
+&lt;h2 id="before-you-begin">Before you begin&lt;/h2>
+&lt;ul>
+&lt;li>A Jikkou context configured for your platform. See &lt;a href="https://www.jikkou.io/docs/tutorials/get_started/">Getting Started&lt;/a>.&lt;/li>
+&lt;/ul>
+&lt;h2 id="1-declare-one-provider-instance-per-cluster">1. Declare one provider instance per cluster&lt;/h2>
+&lt;p>Each cluster is a named entry under &lt;code>provider&lt;/code>, all sharing the same provider type:&lt;/p></description></item><item><title>Jikkou - API References</title><link>https://www.jikkou.io/docs/reference/api-server/api-references/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/reference/api-server/api-references/</guid><description/></item><item><title>jikkou action</title><link>https://www.jikkou.io/docs/reference/cli/commands/jikkou-action/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/reference/cli/commands/jikkou-action/</guid><description>&lt;p>List and execute actions.&lt;/p>
 &lt;h2 id="synopsis">Synopsis&lt;/h2>
 &lt;p>The &lt;code>action&lt;/code> command manages Jikkou actions. Actions are named operations that can be executed on the target platform.
 Like the &lt;code>get&lt;/code> command, &lt;code>action&lt;/code> uses dynamic subcommands based on the actions available from your configured providers.&lt;/p>
@@ -1867,6 +1912,12 @@ to match the desired state defined in your resource files.&lt;/p>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Apply targeting a specific provider&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou apply -f my-resources.yaml --provider kafka-prod
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Apply to a named group of providers (a fleet of clusters) in one command&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou apply -f my-resources.yaml --provider-group kafka-prod-fleet
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Apply to all provider instances, continuing when one fails&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou apply -f my-resources.yaml --provider-all --continue-on-error
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Apply with JSON output format&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou apply -f my-resources.yaml -o JSON --pretty
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
@@ -1945,6 +1996,24 @@ to match the desired state defined in your resource files.&lt;/p>
  &lt;td>&lt;/td>
  &lt;td>&lt;/td>
  &lt;td>Select a specific provider instance&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--provider-group&lt;/code>&lt;/td>
+ &lt;td>&lt;/td>
+ &lt;td>&lt;/td>
+ &lt;td>Target a named group of providers (see &lt;code>provider-groups&lt;/code> config). Mutually exclusive with &lt;code>--provider&lt;/code> and &lt;code>--provider-all&lt;/code>&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--provider-all&lt;/code>&lt;/td>
+ &lt;td>&lt;/td>
+ &lt;td>&lt;code>false&lt;/code>&lt;/td>
+ &lt;td>Target all registered provider instances. Mutually exclusive with &lt;code>--provider&lt;/code> and &lt;code>--provider-group&lt;/code>&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--continue-on-error&lt;/code>&lt;/td>
+ &lt;td>&lt;/td>
+ &lt;td>&lt;code>false&lt;/code>&lt;/td>
+ &lt;td>In multi-provider runs, continue with remaining providers when one fails (default is fail-fast)&lt;/td>
  &lt;/tr>
  &lt;tr>
  &lt;td>&lt;code>--output&lt;/code>&lt;/td>
@@ -2615,6 +2684,9 @@ definitions. This command does not actually perform the reconciliation actions.&
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Diff with selector&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou diff -f my-resources.yaml -s &lt;span class="s1">&amp;#39;metadata.name MATCHES (my-topic-.*)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Detect configuration drift in CI: exit with code 3 when any change is pending&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou diff -f my-resources.yaml --fail-on-changes
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
 &lt;table>
  &lt;thead>
@@ -2716,29 +2788,45 @@ definitions. This command does not actually perform the reconciliation actions.&
  &lt;td>&lt;code>false&lt;/code>&lt;/td>
  &lt;td>Output resources as an ApiResourceChangeList&lt;/td>
  &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--fail-on-changes&lt;/code>&lt;/td>
+ &lt;td>&lt;/td>
+ &lt;td>&lt;code>false&lt;/code>&lt;/td>
+ &lt;td>Exit with code 3 when the diff contains at least one change. Prints a one-line summary to stderr; stdout stays machine-readable&lt;/td>
+ &lt;/tr>
  &lt;/tbody>
 &lt;/table>
-&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;h2 id="exit-codes">Exit codes&lt;/h2>
 &lt;table>
  &lt;thead>
  &lt;tr>
- &lt;th>Flag&lt;/th>
- &lt;th>Description&lt;/th>
+ &lt;th>Code&lt;/th>
+ &lt;th>Meaning&lt;/th>
  &lt;/tr>
  &lt;/thead>
  &lt;tbody>
  &lt;tr>
- &lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
- &lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+ &lt;td>&lt;code>0&lt;/code>&lt;/td>
+ &lt;td>Success. With &lt;code>--fail-on-changes&lt;/code>: no changes detected&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>1&lt;/code>&lt;/td>
+ &lt;td>Validation or execution error&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>2&lt;/code>&lt;/td>
+ &lt;td>Usage error (invalid flags or arguments)&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>3&lt;/code>&lt;/td>
+ &lt;td>Changes detected (only with &lt;code>--fail-on-changes&lt;/code>)&lt;/td>
  &lt;/tr>
  &lt;/tbody>
 &lt;/table>
-&lt;h2 id="see-also">SEE ALSO&lt;/h2>
-&lt;ul>
-&lt;li>&lt;a href="../jikkou-apply">jikkou apply&lt;/a> - Apply all changes&lt;/li>
-&lt;li>&lt;a href="../jikkou-validate">jikkou validate&lt;/a> - Validate resource definitions&lt;/li>
-&lt;li>&lt;a href="../jikkou-prepare">jikkou prepare&lt;/a> - Prepare resources for validation&lt;/li>
-&lt;/ul></description></item><item><title>jikkou get</title><link>https://www.jikkou.io/docs/reference/cli/commands/jikkou-get/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/reference/cli/commands/jikkou-get/</guid><description>&lt;p>Display one or many specific resources.&lt;/p>
+&lt;p>The drift check is evaluated on the filtered result: combining &lt;code>--fail-on-changes&lt;/code> with
+&lt;code>--filter-change-op&lt;/code> or &lt;code>--filter-resource-op&lt;/code> scopes which operations count as drift.
+See &lt;a href="https://www.jikkou.io/docs/how-to-guides/automating/detect-configuration-drift/">Detect configuration drift&lt;/a>
+for a complete CI setup.&lt;/p></description></item><item><title>jikkou get</title><link>https://www.jikkou.io/docs/reference/cli/commands/jikkou-get/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/reference/cli/commands/jikkou-get/</guid><description>&lt;p>Display one or many specific resources.&lt;/p>
 &lt;h2 id="synopsis">Synopsis&lt;/h2>
 &lt;p>Display one or many resources of a given type from the target platform. The &lt;code>get&lt;/code> command groups resources under
 their provider (e.g. &lt;code>kafka&lt;/code>, &lt;code>schemaregistry&lt;/code>, &lt;code>aiven&lt;/code>), so invocations follow the form
@@ -3306,6 +3394,42 @@ validation errors and exits with a non-zero status code.&lt;/p></description></i
  priority = 100
  config = {
  maxNumPartitions = 50
+ }
+ }
+ ]
+}
+&lt;/code>&lt;/pre></description></item><item><title>KafkaTopicMaxReplicas</title><link>https://www.jikkou.io/docs/reference/providers/kafka/transformations/kafkatopicmaxreplicas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/reference/providers/kafka/transformations/kafkatopicmaxreplicas/</guid><description>&lt;div class="pageinfo pageinfo-info">
+&lt;p>This transformation can be used to enforce a maximum value for the replication factor of kafka topics.&lt;/p>
+
+&lt;/div>
+
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>Name&lt;/th>
+ &lt;th>Type&lt;/th>
+ &lt;th>Description&lt;/th>
+ &lt;th>Default&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>&lt;code>maxReplicationFactor&lt;/code>&lt;/td>
+ &lt;td>Int&lt;/td>
+ &lt;td>Maximum value of replication factor to be used for Kafka Topics&lt;/td>
+ &lt;td>&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;h2 id="example">Example&lt;/h2>
+&lt;pre tabindex="0">&lt;code class="language-hocon" data-lang="hocon">jikkou {
+ transformations: [
+ {
+ type = io.jikkou.kafka.transform.KafkaTopicMaxReplicasTransformation
+ priority = 100
+ config = {
+ maxReplicationFactor = 5
  }
  }
  ]

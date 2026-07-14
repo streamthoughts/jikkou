@@ -97,5 +97,16 @@ For the broader picture, see &lt;a href="https://www.jikkou.io/docs/concepts/val
 &lt;li>A Jikkou context configured for your platform — see &lt;a href="https://www.jikkou.io/docs/tutorials/get_started/">Getting Started&lt;/a>.&lt;/li>
 &lt;/ul>
 &lt;h2 id="1-write-a-policy">1. Write a policy&lt;/h2>
-&lt;p>A policy selects the resources it applies to and defines rules. Each rule&amp;rsquo;s &lt;code>expression&lt;/code> fails when it
-evaluates to &lt;code>true&lt;/code>. The &lt;code>failurePolicy&lt;/code> decides what happens on failure:&lt;/p></description></item></channel></rss>
+&lt;p>A policy selects the resources it applies to and defines rules. Each rule&amp;rsquo;s &lt;code>expression&lt;/code> is a CEL
+assertion that must hold for the resource to be valid: the rule fails when the expression evaluates
+to &lt;code>false&lt;/code> (the same convention as Kubernetes ValidatingAdmissionPolicy). The &lt;code>failurePolicy&lt;/code> decides
+what happens on failure:&lt;/p></description></item><item><title>Manage a Fleet of Kafka Clusters</title><link>https://www.jikkou.io/docs/how-to-guides/manage-kafka-fleet/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/manage-kafka-fleet/</guid><description>&lt;p>Most Kafka estates are fleets: a production cluster per region, staging, and often a mix of
+on-premises and managed services. Jikkou applies one declarative model across all of them:
+define each cluster as a named provider instance, group them, and target the group in one
+command.&lt;/p>
+&lt;h2 id="before-you-begin">Before you begin&lt;/h2>
+&lt;ul>
+&lt;li>A Jikkou context configured for your platform. See &lt;a href="https://www.jikkou.io/docs/tutorials/get_started/">Getting Started&lt;/a>.&lt;/li>
+&lt;/ul>
+&lt;h2 id="1-declare-one-provider-instance-per-cluster">1. Declare one provider instance per cluster&lt;/h2>
+&lt;p>Each cluster is a named entry under &lt;code>provider&lt;/code>, all sharing the same provider type:&lt;/p></description></item></channel></rss>

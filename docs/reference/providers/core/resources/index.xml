@@ -21,7 +21,7 @@ Rules can either &lt;strong>fail&lt;/strong> the execution or &lt;strong>filter&
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">metadata&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;string&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Required. Unique policy name.&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">spec&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">failurePolicy: &amp;lt;string&amp;gt; # Required. One of&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">FAIL | FILTER&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">failurePolicy: &amp;lt;string&amp;gt; # Required. One of&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">FAIL | FILTER | CONTINUE&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">selector&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">matchingStrategy: &amp;lt;string&amp;gt; # Optional. One of: ALL | ANY (default&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ALL)&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">matchResources&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
@@ -35,7 +35,7 @@ Rules can either &lt;strong>fail&lt;/strong> the execution or &lt;strong>filter&
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="l">&amp;lt;string&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># CEL expression&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">rules&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;string&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Required. Rule identifier.&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">expression&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;string&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Required. A CEL expression evaluated against the resource.&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">expression&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;string&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Required. A CEL assertion that must evaluate to true for the resource to be valid.&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">message&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;string&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Optional. Static message returned when the rule fails.&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">messageExpression&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">&amp;lt;string&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Optional. CEL expression to generate a dynamic error message.&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
@@ -54,7 +54,7 @@ Rules can either &lt;strong>fail&lt;/strong> the execution or &lt;strong>filter&
  &lt;td>&lt;code>spec.failurePolicy&lt;/code>&lt;/td>
  &lt;td>&lt;code>string&lt;/code>&lt;/td>
  &lt;td>Yes&lt;/td>
- &lt;td>Defines the policy behavior when validation fails. Possible values:&lt;br/>• &lt;code>FAIL&lt;/code> → stop execution with an error.&lt;br/>• &lt;code>FILTER&lt;/code> → skip the invalid resource(s) but continue processing others.&lt;/td>
+ &lt;td>Defines the policy behavior when validation fails. Possible values:&lt;br/>• &lt;code>FAIL&lt;/code> → stop execution with an error.&lt;br/>• &lt;code>FILTER&lt;/code> → skip the invalid resource(s) but continue processing others.&lt;br/>• &lt;code>CONTINUE&lt;/code> → report the violation but let the resource proceed (warning mode).&lt;/td>
  &lt;/tr>
  &lt;tr>
  &lt;td>&lt;code>spec.selector.matchingStrategy&lt;/code>&lt;/td>
@@ -96,7 +96,7 @@ Rules can either &lt;strong>fail&lt;/strong> the execution or &lt;strong>filter&
  &lt;td>&lt;code>spec.rules[].expression&lt;/code>&lt;/td>
  &lt;td>&lt;code>string&lt;/code>&lt;/td>
  &lt;td>Yes&lt;/td>
- &lt;td>A CEL expression evaluated against the resource. The rule fails when the expression evaluates to &lt;code>true&lt;/code>.&lt;/td>
+ &lt;td>A CEL assertion evaluated against the resource. The rule fails when the expression evaluates to &lt;code>false&lt;/code>, i.e., the expression states what must hold for the resource to be valid.&lt;/td>
  &lt;/tr>
  &lt;tr>
  &lt;td>&lt;code>spec.rules[].message&lt;/code>&lt;/td>

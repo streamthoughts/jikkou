@@ -198,6 +198,12 @@ to match the desired state defined in your resource files.&lt;/p>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Apply targeting a specific provider&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou apply -f my-resources.yaml --provider kafka-prod
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Apply to a named group of providers (a fleet of clusters) in one command&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou apply -f my-resources.yaml --provider-group kafka-prod-fleet
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Apply to all provider instances, continuing when one fails&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou apply -f my-resources.yaml --provider-all --continue-on-error
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Apply with JSON output format&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou apply -f my-resources.yaml -o JSON --pretty
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
@@ -276,6 +282,24 @@ to match the desired state defined in your resource files.&lt;/p>
  &lt;td>&lt;/td>
  &lt;td>&lt;/td>
  &lt;td>Select a specific provider instance&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--provider-group&lt;/code>&lt;/td>
+ &lt;td>&lt;/td>
+ &lt;td>&lt;/td>
+ &lt;td>Target a named group of providers (see &lt;code>provider-groups&lt;/code> config). Mutually exclusive with &lt;code>--provider&lt;/code> and &lt;code>--provider-all&lt;/code>&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--provider-all&lt;/code>&lt;/td>
+ &lt;td>&lt;/td>
+ &lt;td>&lt;code>false&lt;/code>&lt;/td>
+ &lt;td>Target all registered provider instances. Mutually exclusive with &lt;code>--provider&lt;/code> and &lt;code>--provider-group&lt;/code>&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--continue-on-error&lt;/code>&lt;/td>
+ &lt;td>&lt;/td>
+ &lt;td>&lt;code>false&lt;/code>&lt;/td>
+ &lt;td>In multi-provider runs, continue with remaining providers when one fails (default is fail-fast)&lt;/td>
  &lt;/tr>
  &lt;tr>
  &lt;td>&lt;code>--output&lt;/code>&lt;/td>
@@ -946,6 +970,9 @@ definitions. This command does not actually perform the reconciliation actions.&
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Diff with selector&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou diff -f my-resources.yaml -s &lt;span class="s1">&amp;#39;metadata.name MATCHES (my-topic-.*)&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># Detect configuration drift in CI: exit with code 3 when any change is pending&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jikkou diff -f my-resources.yaml --fail-on-changes
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="options">Options&lt;/h2>
 &lt;table>
  &lt;thead>
@@ -1047,29 +1074,45 @@ definitions. This command does not actually perform the reconciliation actions.&
  &lt;td>&lt;code>false&lt;/code>&lt;/td>
  &lt;td>Output resources as an ApiResourceChangeList&lt;/td>
  &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>--fail-on-changes&lt;/code>&lt;/td>
+ &lt;td>&lt;/td>
+ &lt;td>&lt;code>false&lt;/code>&lt;/td>
+ &lt;td>Exit with code 3 when the diff contains at least one change. Prints a one-line summary to stderr; stdout stays machine-readable&lt;/td>
+ &lt;/tr>
  &lt;/tbody>
 &lt;/table>
-&lt;h2 id="options-inherited-from-parent-commands">Options inherited from parent commands&lt;/h2>
+&lt;h2 id="exit-codes">Exit codes&lt;/h2>
 &lt;table>
  &lt;thead>
  &lt;tr>
- &lt;th>Flag&lt;/th>
- &lt;th>Description&lt;/th>
+ &lt;th>Code&lt;/th>
+ &lt;th>Meaning&lt;/th>
  &lt;/tr>
  &lt;/thead>
  &lt;tbody>
  &lt;tr>
- &lt;td>&lt;code>--logger-level=&amp;lt;level&amp;gt;&lt;/code>&lt;/td>
- &lt;td>Log level: TRACE, DEBUG, INFO, WARN, ERROR&lt;/td>
+ &lt;td>&lt;code>0&lt;/code>&lt;/td>
+ &lt;td>Success. With &lt;code>--fail-on-changes&lt;/code>: no changes detected&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>1&lt;/code>&lt;/td>
+ &lt;td>Validation or execution error&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>2&lt;/code>&lt;/td>
+ &lt;td>Usage error (invalid flags or arguments)&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>&lt;code>3&lt;/code>&lt;/td>
+ &lt;td>Changes detected (only with &lt;code>--fail-on-changes&lt;/code>)&lt;/td>
  &lt;/tr>
  &lt;/tbody>
 &lt;/table>
-&lt;h2 id="see-also">SEE ALSO&lt;/h2>
-&lt;ul>
-&lt;li>&lt;a href="../jikkou-apply">jikkou apply&lt;/a> - Apply all changes&lt;/li>
-&lt;li>&lt;a href="../jikkou-validate">jikkou validate&lt;/a> - Validate resource definitions&lt;/li>
-&lt;li>&lt;a href="../jikkou-prepare">jikkou prepare&lt;/a> - Prepare resources for validation&lt;/li>
-&lt;/ul></description></item><item><title>jikkou get</title><link>https://www.jikkou.io/docs/reference/cli/commands/jikkou-get/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/reference/cli/commands/jikkou-get/</guid><description>&lt;p>Display one or many specific resources.&lt;/p>
+&lt;p>The drift check is evaluated on the filtered result: combining &lt;code>--fail-on-changes&lt;/code> with
+&lt;code>--filter-change-op&lt;/code> or &lt;code>--filter-resource-op&lt;/code> scopes which operations count as drift.
+See &lt;a href="https://www.jikkou.io/docs/how-to-guides/automating/detect-configuration-drift/">Detect configuration drift&lt;/a>
+for a complete CI setup.&lt;/p></description></item><item><title>jikkou get</title><link>https://www.jikkou.io/docs/reference/cli/commands/jikkou-get/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/reference/cli/commands/jikkou-get/</guid><description>&lt;p>Display one or many specific resources.&lt;/p>
 &lt;h2 id="synopsis">Synopsis&lt;/h2>
 &lt;p>Display one or many resources of a given type from the target platform. The &lt;code>get&lt;/code> command groups resources under
 their provider (e.g. &lt;code>kafka&lt;/code>, &lt;code>schemaregistry&lt;/code>, &lt;code>aiven&lt;/code>), so invocations follow the form
