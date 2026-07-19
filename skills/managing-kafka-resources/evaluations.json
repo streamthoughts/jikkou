@@ -1,0 +1,32 @@
+[
+  {
+    "skills": ["jikkou"],
+    "query": "Create a Kafka topic named 'orders' with 6 partitions, replication factor 3, and 7-day retention on the current cluster.",
+    "expected_behavior": [
+      "Runs the setup check first: jikkou --version, then jikkou health get kafka",
+      "Authors a KafkaTopic YAML matching references/kafka.md (apiVersion kafka.jikkou.io/v1, retention.ms for 7 days, min.insync.replicas <= replicas)",
+      "Runs jikkou validate and jikkou diff on the file before any apply",
+      "Runs jikkou apply --dry-run and shows the diff, waiting for user confirmation before applying without --dry-run"
+    ]
+  },
+  {
+    "skills": ["jikkou"],
+    "query": "Who can read the 'payments' topic on this cluster?",
+    "expected_behavior": [
+      "Reads references/diagnostics.md and fetches ACLs with jikkou get kafka acls -o JSON",
+      "Filters ACLs client-side on spec.acls[].resource.pattern, honoring patternType (literal vs prefixed)",
+      "Does not conclude 'nobody' from an empty ACL list; checks broker authorizer configuration via jikkou get kafka brokers --static-broker-configs -o JSON",
+      "Reports that allow.everyone.if.no.acl.found and super.users are absent from Admin API output and must be read from the broker's own configuration"
+    ]
+  },
+  {
+    "skills": ["jikkou"],
+    "query": "Consumers in group 'invoice-processor' seem stuck. Can you check?",
+    "expected_behavior": [
+      "Takes two snapshots roughly 30 seconds apart with jikkou get kafka consumer-groups -o JSON --offsets",
+      "Derives end offsets as offset + offset-lag and compares committed offsets across the two snapshots",
+      "Distinguishes a STABLE group with unchanged commits and advancing end offsets (stuck) from an EMPTY group with lag (no active members)",
+      "Passes at most one value to --in-states, running one command per state if several states are needed"
+    ]
+  }
+]
