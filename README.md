@@ -144,6 +144,23 @@ Jikkou follows a simple reconciliation loop:
 | **Docker**        | Available as container images on [Docker Hub](https://hub.docker.com/r/streamthoughts/jikkou) |
 | **Native Binary** | GraalVM-compiled native executables for instant startup                                       |
 
+## Use Jikkou with AI Agents
+
+Jikkou ships official [Agent Skills](https://agentskills.io) so coding agents can manage
+your Kafka resources through the CLI — with validation and dry-runs built into the workflow.
+
+**Claude Code:**
+
+```
+/plugin marketplace add streamthoughts/jikkou
+/plugin install jikkou
+```
+
+**Other agents:** copy [`skills/managing-kafka-resources`](./skills/managing-kafka-resources) into your agent's skills directory.
+
+The skill never applies changes without showing a diff or dry-run first, and asks before
+installing anything.
+
 ## Documentation
 
 Full documentation is available at **[jikkou.io](https://jikkou.io/)**.

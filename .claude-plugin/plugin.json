@@ -1,0 +1,10 @@
+{
+  "name": "jikkou",
+  "description": "Official Jikkou skills for AI agents: manage Kafka topics, ACLs, quotas, schemas, and connectors declaratively with the Jikkou CLI.",
+  "version": "0.1.0",
+  "author": { "name": "Jikkou" },
+  "homepage": "https://www.jikkou.io",
+  "repository": "https://github.com/streamthoughts/jikkou",
+  "license": "Apache-2.0",
+  "keywords": ["kafka", "gitops", "topics", "acls", "schema-registry", "kafka-connect"]
+}
