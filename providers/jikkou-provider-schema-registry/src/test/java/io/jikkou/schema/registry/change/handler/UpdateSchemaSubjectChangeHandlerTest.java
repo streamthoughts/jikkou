@@ -33,6 +33,8 @@ import io.jikkou.schema.registry.api.data.CompatibilityObject;
 import io.jikkou.schema.registry.api.data.SubjectSchemaId;
 import io.jikkou.schema.registry.model.CompatibilityLevels;
 import io.jikkou.schema.registry.models.V1SchemaRegistrySubject;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -146,11 +148,62 @@ class UpdateSchemaSubjectChangeHandlerTest {
         verify(api, never()).updateSubjectCompatibilityLevel(any(), any());
     }
 
+    @Test
+    void shouldUpdateSchemaWhenReferencesUpdated() {
+        // Given
+        AsyncSchemaRegistryApi api = mock(AsyncSchemaRegistryApi.class);
+        when(api.updateSubjectCompatibilityLevel(eq(TEST_SUBJECT), any()))
+                .thenReturn(Mono.just(new CompatibilityObject(CompatibilityLevels.BACKWARD.name())));
+        when(api.registerSubjectVersion(eq(TEST_SUBJECT), any(), anyBoolean()))
+                .thenReturn(Mono.just(new SubjectSchemaId(1)));
+
+        List<Map<String, Object>> referencesBefore = List.of(
+                Map.of(
+                        "name", " com.swissquote.eforex.efx.fundamentals.kafka.shared.Metadata",
+                        "subject", "com.swissquote.eforex.efx.fundamentals.kafka.shared.Metadata",
+                        "version", 1
+                )
+        );
+
+        List<Map<String, Object>> referencesAfter = List.of(
+                Map.of(
+                        "name", " com.swissquote.eforex.efx.fundamentals.kafka.shared.Metadata",
+                        "subject", "com.swissquote.eforex.efx.fundamentals.kafka.shared.Metadata",
+                        "version", 2
+                )
+        );
+
+        UpdateSchemaSubjectChangeHandler handler = new UpdateSchemaSubjectChangeHandler(api);
+        ResourceChange change = createUpdateChange(
+                CompatibilityLevels.BACKWARD, CompatibilityLevels.BACKWARD,
+                "schema-v1", "schema-v1",
+                referencesBefore, referencesAfter
+        );
+
+        // When
+        List<ChangeResponse> responses = handler.handleChanges(List.of(change));
+        responses.forEach(r -> r.getResults().join());
+
+        // Then
+        verify(api).registerSubjectVersion(eq(TEST_SUBJECT), any(), anyBoolean());
+        verify(api, never()).updateSubjectCompatibilityLevel(any(), any());
+    }
+
     private ResourceChange createUpdateChange(
             CompatibilityLevels compatBefore,
             CompatibilityLevels compatAfter,
             String schemaBefore,
             String schemaAfter) {
+        return createUpdateChange(compatBefore, compatAfter, schemaBefore, schemaAfter, Collections.emptyList(), Collections.emptyList());
+    }
+
+    private ResourceChange createUpdateChange(
+            CompatibilityLevels compatBefore,
+            CompatibilityLevels compatAfter,
+            String schemaBefore,
+            String schemaAfter,
+            List<Map<String, Object>> referencesBefore,
+            List<Map<String, Object>> referencesAfter) {
 
         StateChange compatChange = compatBefore.equals(compatAfter)
                 ? StateChange.none(DATA_COMPATIBILITY_LEVEL, compatBefore)
@@ -161,6 +214,10 @@ class UpdateSchemaSubjectChangeHandlerTest {
         StateChange schemaChange = schemaBefore.equals(schemaAfter)
                 ? StateChange.none(DATA_SCHEMA, schemaAndTypeBefore)
                 : StateChange.update(DATA_SCHEMA, schemaAndTypeBefore, schemaAndTypeAfter);
+
+        StateChange referencesChange = referencesBefore.equals(referencesAfter)
+                ? StateChange.none(DATA_REFERENCES, referencesBefore)
+                : StateChange.update(DATA_REFERENCES, referencesBefore, referencesAfter);
 
         return GenericResourceChange
                 .builder(V1SchemaRegistrySubject.class)
@@ -175,7 +232,7 @@ class UpdateSchemaSubjectChangeHandlerTest {
                         .withChange(compatChange)
                         .withChange(schemaChange)
                         .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))
-                        .withChange(StateChange.none(DATA_REFERENCES, Collections.emptyList()))
+                        .withChange(referencesChange)
                         .withChange(StateChange.none(DATA_MODE, null))
                         .build())
                 .build();
