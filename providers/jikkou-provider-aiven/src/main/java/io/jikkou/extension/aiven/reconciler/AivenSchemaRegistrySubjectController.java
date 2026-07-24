@@ -16,6 +16,7 @@ import io.jikkou.core.annotation.Description;
 import io.jikkou.core.annotation.SupportedResource;
 import io.jikkou.core.annotation.Title;
 import io.jikkou.core.extension.ExtensionContext;
+import io.jikkou.core.models.ObjectMeta;
 import io.jikkou.core.models.change.GenericResourceChange;
 import io.jikkou.core.models.change.GenericResourceChangeSpec;
 import io.jikkou.core.models.change.ResourceChange;
@@ -24,7 +25,6 @@ import io.jikkou.core.reconciler.ChangeHandler;
 import io.jikkou.core.reconciler.ChangeResult;
 import io.jikkou.core.reconciler.Controller;
 import io.jikkou.core.reconciler.annotations.ControllerConfiguration;
-import io.jikkou.core.selector.Selectors;
 import io.jikkou.extension.aiven.AivenExtensionProvider;
 import io.jikkou.extension.aiven.ApiVersions;
 import io.jikkou.extension.aiven.api.AivenApiClient;
@@ -127,11 +127,15 @@ public class AivenSchemaRegistrySubjectController implements Controller<V1Schema
                 .map(this::useGlobalCompatibilityLevelIfUnspecified)
                 .toList();
 
-        // Get existing resources from the environment.
         AivenSchemaRegistrySubjectCollector collector = new AivenSchemaRegistrySubjectCollector(apiClientConfig)
                 .prettyPrintSchema(false);
 
-        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(context.configuration(), Selectors.NO_SELECTOR).stream()
+        List<String> subjects = expectedSubjects.stream()
+                .map(V1SchemaRegistrySubject::getMetadata)
+                .map(ObjectMeta::getName)
+                .toList();
+
+        List<V1SchemaRegistrySubject> actualSubjects = collector.listAll(context.configuration(), subjects).stream()
                 .filter(context.selector()::apply)
                 .toList();
 
