@@ -33,8 +33,6 @@ import io.jikkou.schema.registry.api.data.CompatibilityObject;
 import io.jikkou.schema.registry.api.data.SubjectSchemaId;
 import io.jikkou.schema.registry.model.CompatibilityLevels;
 import io.jikkou.schema.registry.models.V1SchemaRegistrySubject;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
