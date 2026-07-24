@@ -16,6 +16,8 @@ import io.jikkou.schema.registry.models.SchemaRegistry;
 import io.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
 import io.jikkou.schema.registry.reconciler.internals.SchemaSubjectPrettyPrinter;
+
+import java.util.ArrayList;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +53,8 @@ public final class V1SchemaRegistrySubjectFactory {
                 .build()
             )
             .withSchemaType(schemaType)
-            .withSchema(new SchemaHandle(subjectSchema.schema()));
+            .withSchema(new SchemaHandle(subjectSchema.schema()))
+            .withReferences(subjectSchema.references() == null ? new ArrayList<>() : subjectSchema.references());
 
         if (compatibilityLevels != null) {
             specBuilder = specBuilder.withCompatibilityLevel(compatibilityLevels);
