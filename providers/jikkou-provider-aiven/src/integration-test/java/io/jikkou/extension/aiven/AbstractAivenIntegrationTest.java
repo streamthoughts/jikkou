@@ -10,6 +10,7 @@ import io.jikkou.extension.aiven.api.AivenApiClientConfig;
 import java.io.IOException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -38,5 +39,13 @@ public class AbstractAivenIntegrationTest {
 
     public static void enqueueResponse(MockResponse response) {
         SERVER.enqueue(response);
+    }
+
+    public static int getRequestCount() {
+        return SERVER.getRequestCount();
+    }
+
+    public static RecordedRequest takeRequest() throws InterruptedException {
+        return SERVER.takeRequest();
     }
 }

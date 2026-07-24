@@ -31,6 +31,7 @@ import io.jikkou.schema.registry.SchemaRegistryAnnotations;
 import io.jikkou.schema.registry.model.CompatibilityLevels;
 import io.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import io.jikkou.schema.registry.models.V1SchemaRegistrySubjectSpec;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -70,13 +71,13 @@ public class AivenSchemaRegistrySubjectControllerIT extends BaseExtensionProvide
 
     @Test
     void shouldCreateSchemaRegistrySubject() {
-        // Given
         enqueueResponse(new MockResponse()
             .setHeader("Content-Type", "application/json")
-            .setResponseCode(200)
+            .setResponseCode(404)
             .setBody("""
                 {
-                    "subjects": [ ]
+                    "errors": [ { "message": "Subject 'test' not found.", "status": 404 } ],
+                    "message": "Subject 'test' not found."
                 }
                 """)
         );
@@ -153,16 +154,7 @@ public class AivenSchemaRegistrySubjectControllerIT extends BaseExtensionProvide
 
     @Test
     void shouldUpdateSchemaRegistrySubject() {
-        // Given
-        enqueueResponse(new MockResponse()
-            .setHeader("Content-Type", "application/json")
-            .setResponseCode(200)
-            .setBody("""
-                {
-                    "subjects": [ "test" ]
-                }
-                """)
-        );
+        // Given the expected subject 'test' exists: its latest version + compatibility are described.
         enqueueResponse(new MockResponse()
             .setHeader("Content-Type", "application/json")
             .setResponseCode(200)
@@ -246,5 +238,63 @@ public class AivenSchemaRegistrySubjectControllerIT extends BaseExtensionProvide
             )
             .build();
         Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldOnlyDescribeExpectedSubjectsAndNotTheWholeRegistry() throws InterruptedException {
+        // Given only the latest version + compatibility of the expected subject 'test' are served
+        // (no `list all subjects` response is enqueued: the plan must not scan the whole registry).
+        enqueueResponse(new MockResponse()
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(200)
+            .setBody("""
+                {
+                	"version": {
+                		"subject": "test",
+                		"id": 1,
+                		"schemaType": "AVRO",
+                		"schema": "{\\"namespace\\": \\"example.avro\\",\\"type\\": \\"record\\",\\"name\\": \\"User\\",\\"fields\\": [{\\"name\\": \\"name\\",\\"type\\": \\"string\\"}]}"
+                	}
+                }
+                """)
+        );
+        enqueueResponse(new MockResponse()
+            .setHeader("Content-Type", "application/json")
+            .setResponseCode(200)
+            .setBody("""
+                {
+                  "compatibilityLevel": "BACKWARD"
+                }
+                """)
+        );
+        V1SchemaRegistrySubject resource = V1SchemaRegistrySubject.builder()
+            .withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1)
+            .withMetadata(ObjectMeta.builder().withName(TEST_SUBJECT).build())
+            .withSpec(V1SchemaRegistrySubjectSpec
+                .builder()
+                .withSchemaType(SchemaType.AVRO)
+                .withSchema(new SchemaHandle(AVRO_SCHEMA_V1))
+                .withCompatibilityLevel(CompatibilityLevels.BACKWARD)
+                .build())
+            .build();
+
+        // When
+        api.reconcile(
+            ResourceList.of(List.of(resource)),
+            ReconciliationMode.FULL,
+            ReconciliationContext.builder().dryRun(true).build()
+        );
+
+        // Then only the expected subject 'test' is described (latest version + compatibility) and
+        // the whole registry is never listed: every request targets the managed subject.
+        Assertions.assertEquals(2, getRequestCount());
+        List<String> paths = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            paths.add(takeRequest().getPath());
+        }
+        Assertions.assertTrue(
+            paths.stream().allMatch(path -> path.contains("/" + TEST_SUBJECT)),
+            () -> "Expected only the managed subject to be described (no registry-wide listing), but got: " + paths
+        );
     }
 }
