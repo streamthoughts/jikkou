@@ -68,6 +68,10 @@ public final class UpdateSchemaSubjectChangeHandler
                     .of(change.getSpec().getChanges())
                     .getLast(DATA_SCHEMA);
 
+            StateChange referencesChange = StateChangeList
+                    .of(change.getSpec().getChanges())
+                    .getLast(DATA_REFERENCES);
+
             StateChange modeChange = StateChangeList
                 .of(change.getSpec().getChanges())
                 .getLast(DATA_MODE);
@@ -82,12 +86,14 @@ public final class UpdateSchemaSubjectChangeHandler
 
             if (isTightening) {
                 mono = applySchemaChange(mono, change, schemaChange);
+                mono = applySchemaChange(mono, change, referencesChange);
                 mono = applyModeChange(mono, change, modeChange);
                 mono = applyCompatibilityChange(mono, change, compatibilityChange);
             } else {
                 mono = applyCompatibilityChange(mono, change, compatibilityChange);
                 mono = applyModeChange(mono, change, modeChange);
                 mono = applySchemaChange(mono, change, schemaChange);
+                mono = applySchemaChange(mono, change, referencesChange);
             }
 
             results.add(toChangeResponse(change, mono.toFuture()));
