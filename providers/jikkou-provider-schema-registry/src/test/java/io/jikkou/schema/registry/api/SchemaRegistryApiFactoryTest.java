@@ -15,7 +15,9 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyStore;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;
 import okhttp3.tls.HandshakeCertificates;
@@ -57,7 +59,8 @@ class SchemaRegistryApiFactoryTest {
                 () -> "password",
                 () -> SSLConfig.from(Configuration.empty()),
                 () -> ProxyConfig.from(Configuration.empty()),
-                false
+                false,
+                null
         );
 
         // When
@@ -104,7 +107,8 @@ class SchemaRegistryApiFactoryTest {
                 () -> null,
                 () -> SSLConfig.from(Configuration.empty()),
                 () -> ProxyConfig.from(Configuration.empty()),
-                false
+                false,
+                null
         );
 
         // When
@@ -132,7 +136,8 @@ class SchemaRegistryApiFactoryTest {
                 () -> null,
                 () -> SSLConfig.from(Configuration.empty()),
                 () -> ProxyConfig.from(Configuration.empty()),
-                false
+                false,
+                null
         );
 
         // When
@@ -154,7 +159,8 @@ class SchemaRegistryApiFactoryTest {
                 () -> null,
                 () -> SSLConfig.from(Configuration.empty()),
                 () -> ProxyConfig.from(Configuration.empty()),
-                false
+                false,
+                null
         );
 
         // When
@@ -211,7 +217,8 @@ class SchemaRegistryApiFactoryTest {
                             SSLConfig.SSL_TRUST_STORE_TYPE.key(), "JKS"
                     ))),
                     () -> ProxyConfig.from(Configuration.empty()),
-                    false
+                    false,
+                    null
             );
 
             // When
@@ -225,6 +232,52 @@ class SchemaRegistryApiFactoryTest {
             Assertions.assertEquals(List.of("subject-1"), subjects);
         } finally {
             httpsServer.close();
+        }
+    }
+
+    @Test
+    @DisplayName("Should send custom headers in http request")
+    public void getCustomHeader() throws InterruptedException {
+        // Given
+        HttpPathBasedDispatcher schemaRegistryHTTPDispatcher = HttpPathBasedDispatcher.builder()
+                .forPath("/subjects/subject-value/versions", new MockResponse.Builder()
+                        .code(200)
+                        .addHeader("Content-Type", "application/vnd.schemaregistry.v1+json")
+                        .body("[]")
+                        .build())
+                .build();
+        schemaRegistryMockServer.setDispatcher(schemaRegistryHTTPDispatcher);
+
+        HashMap<String, Object> clientHeaders = new HashMap<>();
+        clientHeaders.put("custom-header-1", "custom-value-1");
+        clientHeaders.put("custom-header-2", "custom-value-2");
+
+        SchemaRegistryClientConfig config = new SchemaRegistryClientConfig(
+                List.of(String.format("http://%s:%s", schemaRegistryMockServer.getHostName(), schemaRegistryMockServer.getPort())),
+                "generic",
+                AuthMethod.BASICAUTH,
+                () -> "username",
+                () -> "password",
+                () -> SSLConfig.from(Configuration.empty()),
+                () -> ProxyConfig.from(Configuration.empty()),
+                false,
+                clientHeaders
+        );
+
+        // When
+        List<Integer> versions;
+        try (SchemaRegistryApi schemaRegistryApi = SchemaRegistryApiFactory.create(config)) {
+            versions = schemaRegistryApi.getAllSubjectVersions("subject-value");
+        }
+
+        // Then
+        Assertions.assertNotNull(versions);
+
+        var actualHeaders = schemaRegistryMockServer.takeRequest().getHeaders();
+
+        for (Map.Entry<String, Object> header : clientHeaders.entrySet()) {
+            String actualValue = actualHeaders.get(header.getKey());
+            Assertions.assertEquals(header.getValue(), actualValue);
         }
     }
 

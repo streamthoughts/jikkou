@@ -9,6 +9,7 @@ package io.jikkou.schema.registry.api;
 import io.jikkou.http.client.proxy.ProxyConfig;
 import io.jikkou.http.client.ssl.SSLConfig;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public record SchemaRegistryClientConfig(
@@ -19,7 +20,8 @@ public record SchemaRegistryClientConfig(
     Supplier<String> basicAuthPassword,
     Supplier<SSLConfig> sslConfig,
     Supplier<ProxyConfig> proxyConfig,
-    Boolean debugLoggingEnabled
+    Boolean debugLoggingEnabled,
+    Map<String, Object> schemaRegistryClientHeaders
 ) {
 
     /**
