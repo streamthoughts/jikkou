@@ -11,6 +11,7 @@ import io.jikkou.http.client.RestClientBuilder;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,9 @@ public final class SchemaRegistryApiFactory {
         // auth method, so HTTPS endpoints with private CAs work for basicAuth/none too.
         builder.sslConfig(config.sslConfig().get());
         builder.proxyConfig(config.proxyConfig().get());
+
+        Optional.ofNullable(config.schemaRegistryClientHeaders())
+                .ifPresent(builder::headers);
 
         builder = switch (config.authMethod()) {
             case BASICAUTH -> {
