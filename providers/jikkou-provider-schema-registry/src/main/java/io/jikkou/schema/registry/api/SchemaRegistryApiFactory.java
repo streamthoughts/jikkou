@@ -11,7 +11,6 @@ import io.jikkou.http.client.RestClientBuilder;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,9 +53,6 @@ public final class SchemaRegistryApiFactory {
         builder.sslConfig(config.sslConfig().get());
         builder.proxyConfig(config.proxyConfig().get());
 
-        Optional.ofNullable(config.schemaRegistryClientHeaders())
-                .ifPresent(builder::headers);
-
         builder = switch (config.authMethod()) {
             case BASICAUTH -> {
                 String buildAuthorizationHeader = getAuthorizationHeader(config);
@@ -67,6 +63,10 @@ public final class SchemaRegistryApiFactory {
 
             case INVALID -> throw new IllegalStateException("Unexpected value: " + config.authMethod());
         };
+
+        // Applied last so that user-supplied headers override the ones set above.
+        builder.clientHeaders(config.clientHeaders());
+
         return builder.build(SchemaRegistryApi.class);
     }
 
