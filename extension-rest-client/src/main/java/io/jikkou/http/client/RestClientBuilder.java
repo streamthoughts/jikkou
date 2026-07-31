@@ -31,10 +31,14 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -69,6 +73,14 @@ public class RestClientBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(RestClientBuilder.class);
 
     public static final AllowAllHostNameVerifier NO_HOST_NAME_VERIFIER = new AllowAllHostNameVerifier();
+
+    private static final Set<String> SENSITIVE_HEADER_NAMES =
+        Set.of("authorization", "proxy-authorization", "cookie", "set-cookie");
+
+    private static final Pattern SENSITIVE_HEADER_PATTERN =
+        Pattern.compile("(?i).*(token|secret|key|password).*");
+
+    private static final String REDACTED = "***";
 
     private URI baseUri;
     private boolean followRedirects;
@@ -458,6 +470,31 @@ public class RestClientBuilder {
     }
 
     /**
+     * @return {@code true} if the given header name is likely to carry a credential.
+     */
+    static boolean isSensitiveHeader(final String name) {
+        if (name == null) {
+            return false;
+        }
+        return SENSITIVE_HEADER_NAMES.contains(name.toLowerCase(Locale.ROOT))
+            || SENSITIVE_HEADER_PATTERN.matcher(name).matches();
+    }
+
+    /**
+     * Renders the given headers for logging, masking the values of any header whose
+     * name is likely to carry a credential.
+     *
+     * @param headers the request headers.
+     * @return a printable representation with sensitive values masked.
+     */
+    static String redactHeaders(final Map<String, List<Object>> headers) {
+        return headers.entrySet().stream()
+            .map(entry -> entry.getKey() + "="
+                + (isSensitiveHeader(entry.getKey()) ? REDACTED : entry.getValue()))
+            .collect(Collectors.joining(", ", "{", "}"));
+    }
+
+    /**
      * ClientRequestFilter that logs HTTP requests.
      */
     private static class LoggingRequestFilter implements ClientRequestFilter {
@@ -465,7 +502,7 @@ public class RestClientBuilder {
         public void filter(ClientRequestContext requestContext) {
             LOG.info("HTTP Request: {} {}", requestContext.getMethod(), requestContext.getUri());
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Headers: {}", requestContext.getHeaders());
+                LOG.debug("Headers: {}", redactHeaders(requestContext.getHeaders()));
             }
         }
     }

@@ -7,8 +7,10 @@
 package io.jikkou.http.client;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.jikkou.core.config.Configuration;
@@ -29,6 +31,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.security.KeyStore;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import okhttp3.mockwebserver.MockResponse;
@@ -290,6 +293,49 @@ class RestClientBuilderTest {
         // Then
         RecordedRequest request = server.takeRequest();
         assertEquals(2, request.getHeaders().values("X-Multi").size());
+    }
+
+    @Test
+    void shouldFlagWellKnownSensitiveHeaderNames() {
+        assertTrue(RestClientBuilder.isSensitiveHeader("Authorization"));
+        assertTrue(RestClientBuilder.isSensitiveHeader("authorization"));
+        assertTrue(RestClientBuilder.isSensitiveHeader("Proxy-Authorization"));
+        assertTrue(RestClientBuilder.isSensitiveHeader("Cookie"));
+        assertTrue(RestClientBuilder.isSensitiveHeader("Set-Cookie"));
+    }
+
+    @Test
+    void shouldFlagHeaderNamesMatchingSecretPatterns() {
+        assertTrue(RestClientBuilder.isSensitiveHeader("X-API-Key"));
+        assertTrue(RestClientBuilder.isSensitiveHeader("X-Auth-Token"));
+        assertTrue(RestClientBuilder.isSensitiveHeader("X-Client-Secret"));
+        assertTrue(RestClientBuilder.isSensitiveHeader("X-Password"));
+    }
+
+    @Test
+    void shouldNotFlagOrdinaryHeaderNames() {
+        assertFalse(RestClientBuilder.isSensitiveHeader("Content-Type"));
+        assertFalse(RestClientBuilder.isSensitiveHeader("Accept"));
+        assertFalse(RestClientBuilder.isSensitiveHeader("X-Tenant"));
+        assertFalse(RestClientBuilder.isSensitiveHeader(null));
+    }
+
+    @Test
+    void shouldMaskSensitiveHeaderValuesAndKeepOthersReadable() {
+        // Given
+        Map<String, List<Object>> headers = new LinkedHashMap<>();
+        headers.put("Content-Type", List.of("application/json"));
+        headers.put("Authorization", List.of("Basic dXNlcjpwYXNz"));
+        headers.put("X-Api-Key", List.of("super-secret"));
+        headers.put("X-Tenant", List.of("acme"));
+
+        // When
+        String redacted = RestClientBuilder.redactHeaders(headers);
+
+        // Then
+        assertEquals(
+                "{Content-Type=[application/json], Authorization=***, X-Api-Key=***, X-Tenant=[acme]}",
+                redacted);
     }
 
     @Test
