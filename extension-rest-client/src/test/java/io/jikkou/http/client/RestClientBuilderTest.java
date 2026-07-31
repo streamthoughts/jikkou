@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.security.KeyStore;
 import java.util.List;
+import java.util.Map;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -182,6 +183,113 @@ class RestClientBuilderTest {
         RecordedRequest request = server.takeRequest();
         assertEquals("Bearer test-token", request.getHeader("Authorization"));
         assertEquals("custom-value", request.getHeader("X-Custom-Header"));
+    }
+
+    @Test
+    void shouldReplaceHeaderValueWhenUsingSetHeader() throws InterruptedException {
+        // Given
+        server.enqueue(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("pong"));
+
+        // When
+        TestResource resource = RestClientBuilder.newBuilder()
+                .baseUri(server.url("/").toString())
+                .header("Authorization", "Basic first")
+                .setHeader("Authorization", "Bearer second")
+                .build(TestResource.class);
+        resource.ping();
+
+        // Then
+        RecordedRequest request = server.takeRequest();
+        assertEquals("Bearer second", request.getHeader("Authorization"));
+        assertEquals(1, request.getHeaders().values("Authorization").size());
+    }
+
+    @Test
+    void shouldTreatHeaderNamesAsCaseInsensitive() throws InterruptedException {
+        // Given
+        server.enqueue(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("pong"));
+
+        // When
+        TestResource resource = RestClientBuilder.newBuilder()
+                .baseUri(server.url("/").toString())
+                .header("Authorization", "Basic first")
+                .setHeader("authorization", "Bearer second")
+                .build(TestResource.class);
+        resource.ping();
+
+        // Then
+        RecordedRequest request = server.takeRequest();
+        assertEquals(1, request.getHeaders().values("Authorization").size());
+        assertEquals("Bearer second", request.getHeader("Authorization"));
+    }
+
+    @Test
+    void shouldLetClientHeadersOverrideBuiltInAuthorizationHeader() throws InterruptedException {
+        // Given
+        server.enqueue(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("pong"));
+
+        // When
+        TestResource resource = RestClientBuilder.newBuilder()
+                .baseUri(server.url("/").toString())
+                .header("Authorization", "Basic built-in")
+                .clientHeaders(Map.of("Authorization", "Bearer custom", "X-Tenant", "acme"))
+                .build(TestResource.class);
+        resource.ping();
+
+        // Then
+        RecordedRequest request = server.takeRequest();
+        assertEquals(1, request.getHeaders().values("Authorization").size());
+        assertEquals("Bearer custom", request.getHeader("Authorization"));
+        assertEquals("acme", request.getHeader("X-Tenant"));
+    }
+
+    @Test
+    void shouldIgnoreNullAndEmptyClientHeaders() {
+        // Given
+        server.enqueue(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("pong"));
+
+        // When
+        TestResource resource = RestClientBuilder.newBuilder()
+                .baseUri(server.url("/").toString())
+                .clientHeaders(null)
+                .clientHeaders(Map.of())
+                .build(TestResource.class);
+
+        // Then
+        assertEquals("pong", resource.ping());
+    }
+
+    @Test
+    void shouldKeepAppendSemanticsForHeaderMethod() throws InterruptedException {
+        // Given
+        server.enqueue(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setResponseCode(200)
+                .setBody("pong"));
+
+        // When
+        TestResource resource = RestClientBuilder.newBuilder()
+                .baseUri(server.url("/").toString())
+                .header("X-Multi", "one")
+                .header("X-Multi", "two")
+                .build(TestResource.class);
+        resource.ping();
+
+        // Then
+        RecordedRequest request = server.takeRequest();
+        assertEquals(2, request.getHeaders().values("X-Multi").size());
     }
 
     @Test
