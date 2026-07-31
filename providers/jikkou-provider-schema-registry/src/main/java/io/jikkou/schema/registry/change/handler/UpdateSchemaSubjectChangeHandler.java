@@ -9,6 +9,7 @@ package io.jikkou.schema.registry.change.handler;
 import static io.jikkou.core.reconciler.Operation.CREATE;
 import static io.jikkou.core.reconciler.Operation.DELETE;
 import static io.jikkou.core.reconciler.Operation.UPDATE;
+import static io.jikkou.core.reconciler.Operation.NONE;
 import static io.jikkou.schema.registry.change.SchemaSubjectChangeComputer.*;
 import static io.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_COMPATIBILITY_LEVEL;
 import static io.jikkou.schema.registry.change.SchemaSubjectChangeComputer.DATA_SCHEMA;
@@ -26,6 +27,8 @@ import io.jikkou.schema.registry.model.CompatibilityLevels;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
@@ -68,6 +71,10 @@ public final class UpdateSchemaSubjectChangeHandler
                     .of(change.getSpec().getChanges())
                     .getLast(DATA_SCHEMA);
 
+            StateChange referencesChange = StateChangeList
+                    .of(change.getSpec().getChanges())
+                    .getLast(DATA_REFERENCES);
+
             StateChange modeChange = StateChangeList
                 .of(change.getSpec().getChanges())
                 .getLast(DATA_MODE);
@@ -81,13 +88,13 @@ public final class UpdateSchemaSubjectChangeHandler
             boolean isTightening = isCompatibilityTightening(compatibilityChange);
 
             if (isTightening) {
-                mono = applySchemaChange(mono, change, schemaChange);
+                mono = applySchemaChange(mono, change, schemaChange, referencesChange);
                 mono = applyModeChange(mono, change, modeChange);
                 mono = applyCompatibilityChange(mono, change, compatibilityChange);
             } else {
                 mono = applyCompatibilityChange(mono, change, compatibilityChange);
                 mono = applyModeChange(mono, change, modeChange);
-                mono = applySchemaChange(mono, change, schemaChange);
+                mono = applySchemaChange(mono, change, schemaChange, referencesChange);
             }
 
             results.add(toChangeResponse(change, mono.toFuture()));
@@ -126,10 +133,16 @@ public final class UpdateSchemaSubjectChangeHandler
         return mono;
     }
 
-    private Mono<Void> applySchemaChange(Mono<Void> mono, ResourceChange change, StateChange schemaChange) {
-        if (UPDATE == schemaChange.getOp()) {
-            mono = mono.then(registerSubjectVersion(change));
-        }
-        return mono;
+    private Mono<Void> applySchemaChange(Mono<Void> mono,
+                                         ResourceChange change,
+                                         StateChange schemaChange,
+                                         StateChange referencesChange) {
+        return isChanged(schemaChange) || isChanged(referencesChange)
+                ? mono.then(registerSubjectVersion(change))
+                : mono;
+    }
+
+    private static boolean isChanged(@Nullable StateChange stateChange) {
+        return stateChange != null && NONE != stateChange.getOp();
     }
 }
