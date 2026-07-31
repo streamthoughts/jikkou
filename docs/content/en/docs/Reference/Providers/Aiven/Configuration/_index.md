@@ -43,6 +43,13 @@ jikkou {
       nonProxyHosts = "localhost,127.0.0.1"
       # Enable debug logging
       debugLoggingEnabled = false
+
+      # Additional HTTP headers sent on every request to the Aiven REST API.
+      # Applied last, so these override headers Jikkou sets itself, including 'Authorization'.
+      clientHeaders {
+        X-Api-Gateway-Key = "my-gateway-key"
+        X-Tenant = "acme"
+      }
     }
   }
 }
@@ -66,5 +73,28 @@ If `proxyUrl` is not set, Jikkou honors the standard JVM proxy system properties
 {{% alert title="Note" color="info" %}}
 The OS-level `http_proxy` / `https_proxy` environment variables are **not** read by the JVM
 and have no effect. Use `proxyUrl` or the JVM system properties above.
+{{% /alert %}}
+
+## Custom HTTP headers
+
+The `clientHeaders` property attaches arbitrary HTTP headers to every request Jikkou
+sends to the Aiven REST API. It is useful for API gateway keys, tenant identifiers,
+and tracing headers.
+
+```hocon
+clientHeaders {
+  X-Api-Gateway-Key = "my-gateway-key"
+  X-Tenant = "acme"
+}
+```
+
+Custom headers are applied **last**, so a header set here replaces the one Jikkou would
+otherwise send under the same name, including the `Authorization` header built from
+`tokenAuth`. Header names are matched case-insensitively.
+
+{{% alert title="Note" color="info" %}}
+When debug logging is enabled, header values are redacted if the header name is
+`Authorization`, `Proxy-Authorization`, `Cookie`, or `Set-Cookie`, or if it contains
+`token`, `secret`, `key`, or `password`. Header names are always logged in full.
 {{% /alert %}}
 
