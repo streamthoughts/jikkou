@@ -30,10 +30,10 @@ import java.security.cert.CertificateException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
@@ -72,7 +72,7 @@ public class RestClientBuilder {
 
     private URI baseUri;
     private boolean followRedirects;
-    private final Map<String, List<Object>> headers = new HashMap<>();
+    private final Map<String, List<Object>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     private boolean enableClientDebugging = false;
     private final ResteasyClientBuilder clientBuilder;
     private ObjectMapper objectMapper = Jackson.JSON_OBJECT_MAPPER;
@@ -208,6 +208,42 @@ public class RestClientBuilder {
      */
     public RestClientBuilder headers(final Map<String, Object> headers) {
         headers.forEach(this::header);
+        return this;
+    }
+
+    /**
+     * Sets an HTTP header on the request, replacing any value previously set for that
+     * header name. Header names are matched case-insensitively.
+     *
+     * @param header the header name.
+     * @param value  the header value.
+     * @return {@code this}.
+     */
+    public RestClientBuilder setHeader(final String header, final Object value) {
+        List<Object> values = new ArrayList<>(1);
+        values.add(value);
+        this.headers.put(header, values);
+        return this;
+    }
+
+    /**
+     * Applies user-supplied custom HTTP headers, overriding any header of the same name
+     * already set on this builder. Call this last so that custom headers take precedence
+     * over the headers Jikkou sets itself.
+     *
+     * @param clientHeaders the custom headers; may be {@code null} or empty.
+     * @return {@code this}.
+     */
+    public RestClientBuilder clientHeaders(final Map<String, String> clientHeaders) {
+        if (clientHeaders == null || clientHeaders.isEmpty()) {
+            return this;
+        }
+        clientHeaders.forEach((name, value) -> {
+            if (this.headers.containsKey(name)) {
+                LOG.warn("Custom client header '{}' overrides the header set by Jikkou.", name);
+            }
+            setHeader(name, value);
+        });
         return this;
     }
 
