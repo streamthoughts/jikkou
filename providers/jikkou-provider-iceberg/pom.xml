@@ -139,7 +139,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.11</version>
             <scope>runtime</scope>
         </dependency>
         <!-- Lombok (annotation processing + compile) -->

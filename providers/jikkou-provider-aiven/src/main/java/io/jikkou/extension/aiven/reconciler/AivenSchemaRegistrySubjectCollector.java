@@ -33,8 +33,10 @@ import io.jikkou.schema.registry.V1SchemaRegistrySubjectFactory;
 import io.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import jakarta.ws.rs.WebApplicationException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -100,7 +102,6 @@ public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRe
         AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
         try {
             ListSchemaSubjectsResponse response = api.listSchemaRegistrySubjects();
-
             if (!response.errors().isEmpty()) {
                 throw new JikkouRuntimeException(
                         String.format("failed to list kafka schema registry subjects. %s (%s)",
@@ -109,41 +110,61 @@ public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRe
                         )
                 );
             }
-
-            CompletableFuture<List<V1SchemaRegistrySubject>> result = AsyncUtils
-                    .waitForAll(getAllSchemaRegistrySubjectsAsync(response.subjects(), api));
-
-            Optional<Throwable> exception = AsyncUtils.getException(result);
-            if (exception.isPresent()) {
-                Throwable error = exception.get();
-                if (error instanceof WebApplicationException wae)
-                    throw wae;
-
-                throw new AivenApiClientException("Failed to list schema registry subject versions", error);
-            }
-
-            List<V1SchemaRegistrySubject> items = result.join().stream()
-                    .map(subject -> subject.withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1))
-                    .toList();
-            return new V1SchemaRegistrySubjectList.Builder().withItems(items).build();
-
+            return collectSubjects(response.subjects(), api);
         } catch (WebApplicationException e) {
-            String response;
-            try {
-                response = Jackson.JSON_OBJECT_MAPPER
-                        .writerWithDefaultPrettyPrinter()
-                        .writeValueAsString(e.getResponse().readEntity(JsonNode.class));
-            } catch (JsonProcessingException ex) {
-                response = e.getResponse().readEntity(String.class);
-            }
-            throw new AivenApiClientException(String.format(
-                    "failed to list schema registry subject versions. %s:%n%s",
-                    e.getLocalizedMessage(),
-                    response
-            ), e);
+            throw newListException(e);
         } finally {
             api.close(); // make sure api is closed after catching exception
         }
+    }
+
+    public ResourceList<V1SchemaRegistrySubject> listAll(@NotNull Configuration configuration,
+                                                         @NotNull List<String> subjects) {
+        AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
+        try {
+            return collectSubjects(subjects, api);
+        } catch (WebApplicationException e) {
+            throw newListException(e);
+        } finally {
+            api.close(); // make sure api is closed after catching exception
+        }
+    }
+
+    private ResourceList<V1SchemaRegistrySubject> collectSubjects(@NotNull List<String> subjects,
+                                                                  @NotNull AivenApiClient api) {
+        CompletableFuture<List<V1SchemaRegistrySubject>> result = AsyncUtils
+                .waitForAll(getAllSchemaRegistrySubjectsAsync(subjects, api));
+
+        Optional<Throwable> exception = AsyncUtils.getException(result);
+        if (exception.isPresent()) {
+            Throwable error = exception.get();
+            if (error instanceof WebApplicationException wae)
+                throw wae;
+
+            throw new AivenApiClientException("Failed to list schema registry subject versions", error);
+        }
+
+        List<V1SchemaRegistrySubject> items = result.join().stream()
+                .filter(Objects::nonNull) // subjects that do not exist (404) are skipped
+                .map(subject -> subject.withApiVersion(ApiVersions.KAFKA_AIVEN_V1BETA1))
+                .toList();
+        return new V1SchemaRegistrySubjectList.Builder().withItems(items).build();
+    }
+
+    private AivenApiClientException newListException(@NotNull WebApplicationException e) {
+        String response;
+        try {
+            response = Jackson.JSON_OBJECT_MAPPER
+                    .writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(e.getResponse().readEntity(JsonNode.class));
+        } catch (JsonProcessingException ex) {
+            response = e.getResponse().readEntity(String.class);
+        }
+        return new AivenApiClientException(String.format(
+                "failed to list schema registry subject versions. %s:%n%s",
+                e.getLocalizedMessage(),
+                response
+        ), e);
     }
 
     @NotNull
@@ -168,6 +189,22 @@ public class AivenSchemaRegistrySubjectCollector implements Collector<V1SchemaRe
                 .thenApply(pair ->
                         // Create SchemaRegistrySubject object
                         factory.createSchemaRegistrySubject(pair._1().version(), pair._2().compatibilityLevel(), null)
-                );
+                )
+                // A requested subject may not exist (e.g. it is about to be created): skip it,
+                // mirroring the generic schema-registry collector's emptyOn404 behaviour.
+                .exceptionally(t -> {
+                    if (isNotFound(t)) {
+                        return null;
+                    }
+                    throw (t instanceof CompletionException ce) ? ce : new CompletionException(t);
+                });
+    }
+
+    private static boolean isNotFound(final Throwable throwable) {
+        Throwable cause = (throwable instanceof CompletionException && throwable.getCause() != null)
+                ? throwable.getCause()
+                : throwable;
+        return cause instanceof WebApplicationException wae
+                && wae.getResponse().getStatus() == 404;
     }
 }

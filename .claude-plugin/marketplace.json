@@ -1,0 +1,11 @@
+{
+  "name": "jikkou",
+  "owner": { "name": "Jikkou" },
+  "plugins": [
+    {
+      "name": "jikkou",
+      "source": "./",
+      "description": "Official Jikkou skills for AI agents: manage Kafka topics, ACLs, quotas, schemas, and connectors declaratively with the Jikkou CLI."
+    }
+  ]
+}
