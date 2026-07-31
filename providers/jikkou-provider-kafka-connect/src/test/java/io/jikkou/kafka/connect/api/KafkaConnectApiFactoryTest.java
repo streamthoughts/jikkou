@@ -12,6 +12,7 @@ import io.jikkou.http.client.ssl.SSLConfig;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Map;
 import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -52,7 +53,8 @@ class KafkaConnectApiFactoryTest {
                 () -> "secret",
                 () -> SSLConfig.from(Configuration.empty()),
                 () -> ProxyConfig.from(Configuration.empty()),
-                false
+                false,
+                Map.of()
         );
 
         // When
@@ -67,5 +69,55 @@ class KafkaConnectApiFactoryTest {
         // result should correspond to base64 encoded string "alice:secret" prefixed with "Basic"
         Assertions.assertEquals("Basic " + expectedCredentials, authorization,
                 "Authorization header must contain the base64-encoded credentials");
+    }
+
+    @Test
+    @DisplayName("Should let a custom Authorization header override basicauth")
+    void shouldLetCustomAuthorizationHeaderOverrideBasicAuth() throws InterruptedException {
+        // Given
+        mockServer.enqueue(new MockResponse.Builder()
+                .code(200)
+                .addHeader("Content-Type", "application/json")
+                .body("[]")
+                .build());
+        KafkaConnectClientConfig config = new KafkaConnectClientConfig(
+                "test-cluster",
+                String.format("http://%s:%s", mockServer.getHostName(), mockServer.getPort()),
+                AuthMethod.BASICAUTH,
+                () -> "alice",
+                () -> "secret",
+                () -> SSLConfig.from(Configuration.empty()),
+                () -> ProxyConfig.from(Configuration.empty()),
+                false,
+                Map.of("Authorization", "Bearer custom-token", "X-Tenant", "acme")
+        );
+
+        // When
+        try (KafkaConnectApi api = KafkaConnectApiFactory.create(config)) {
+            api.listConnectors();
+        }
+
+        // Then
+        var actualHeaders = mockServer.takeRequest().getHeaders();
+        Assertions.assertEquals("Bearer custom-token", actualHeaders.get("Authorization"));
+        Assertions.assertEquals(1, actualHeaders.values("Authorization").size());
+        Assertions.assertEquals("acme", actualHeaders.get("X-Tenant"));
+    }
+
+    @Test
+    @DisplayName("Should read clientHeaders from configuration")
+    void shouldReadClientHeadersFromConfiguration() {
+        // Given
+        Configuration configuration = Configuration.from(Map.of(
+                "name", "test-cluster",
+                "url", "http://localhost:8083",
+                "clientHeaders", Map.of("X-Tenant", "acme")
+        ));
+
+        // When
+        KafkaConnectClientConfig config = KafkaConnectClientConfig.from(configuration);
+
+        // Then
+        Assertions.assertEquals(Map.of("X-Tenant", "acme"), config.clientHeaders());
     }
 }
