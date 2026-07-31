@@ -40,6 +40,7 @@ import io.jikkou.extension.aiven.reconciler.AivenSchemaRegistrySubjectCollector;
 import io.jikkou.extension.aiven.reconciler.AivenSchemaRegistrySubjectController;
 import io.jikkou.extension.aiven.validation.AivenSchemaCompatibilityValidation;
 import io.jikkou.extension.aiven.validation.SchemaRegistryAclEntryValidation;
+import io.jikkou.http.client.ClientHeadersConfig;
 import io.jikkou.http.client.proxy.ProxyConfig;
 import io.jikkou.kafka.models.V1KafkaTopic;
 import io.jikkou.schema.registry.models.V1SchemaRegistrySubject;
@@ -113,7 +114,8 @@ public final class AivenExtensionProvider extends BaseExtensionProvider {
             Config.PROJECT.get(configuration),
             Config.SERVICE.get(configuration),
             ProxyConfig.from(configuration),
-            Config.DEBUG_LOGGING_ENABLED.get(configuration)
+            Config.DEBUG_LOGGING_ENABLED.get(configuration),
+            ClientHeadersConfig.from(configuration)
         );
     }
 
@@ -135,6 +137,7 @@ public final class AivenExtensionProvider extends BaseExtensionProvider {
             ProxyConfig.PROXY_USERNAME,
             ProxyConfig.PROXY_PASSWORD,
             ProxyConfig.NON_PROXY_HOSTS,
+            ClientHeadersConfig.CLIENT_HEADERS,
             Config.DEBUG_LOGGING_ENABLED,
             Config.TOPIC_DELETE_EXCLUDE_PATTERNS
         );
