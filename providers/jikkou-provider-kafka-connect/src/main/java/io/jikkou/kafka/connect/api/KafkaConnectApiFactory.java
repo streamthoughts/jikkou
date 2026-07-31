@@ -69,6 +69,10 @@ public final class KafkaConnectApiFactory {
 
             case INVALID -> throw new IllegalStateException("Unexpected value: " + config.authMethod());
         };
+
+        // Applied last so that user-supplied headers override the ones set above.
+        builder.clientHeaders(config.clientHeaders());
+
         return builder.build(KafkaConnectApi.class);
     }
 
