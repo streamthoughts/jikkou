@@ -171,15 +171,31 @@
     </dependencies>
     <dependencyManagement>
         <dependencies>
-            <!-- Netty BOM must be imported BEFORE Micronaut so its 4.2.11 pins win
-                 (Maven first-declaration-wins). Micronaut platform 4.10.10 otherwise
-                 pulls in netty-codec-http* 4.2.9 (CVE-2026-33870, CVE-2026-33871). -->
+            <!-- Netty BOM must be imported BEFORE Micronaut so its pins win
+                 (Maven first-declaration-wins). Micronaut platform otherwise
+                 pulls in an older netty-codec-http* release. -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
                 <version>${netty.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- Jackson BOM must also be imported BEFORE Micronaut, which otherwise
+                 pulls in an older jackson patch release. -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Likewise BEFORE Micronaut, which otherwise downgrades the pgjdbc
+                 driver pulled in by jikkou-provider-iceberg. -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.micronaut.platform</groupId>
