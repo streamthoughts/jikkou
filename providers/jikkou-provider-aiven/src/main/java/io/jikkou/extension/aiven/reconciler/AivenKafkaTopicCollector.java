@@ -23,6 +23,7 @@ import io.jikkou.core.models.ResourceList;
 import io.jikkou.core.models.generics.GenericResourceList;
 import io.jikkou.core.reconciler.Collector;
 import io.jikkou.core.selector.Selector;
+import io.jikkou.core.selector.Selectors;
 import io.jikkou.extension.aiven.AivenExtensionProvider;
 import io.jikkou.extension.aiven.ApiVersions;
 import io.jikkou.extension.aiven.adapter.KafkaTopicAdapter;
@@ -31,7 +32,7 @@ import io.jikkou.extension.aiven.api.AivenApiClientConfig;
 import io.jikkou.extension.aiven.api.AivenApiClientException;
 import io.jikkou.extension.aiven.api.AivenApiClientFactory;
 import io.jikkou.extension.aiven.api.data.KafkaTopicConfigInfo;
-import io.jikkou.extension.aiven.api.data.KafkaTopicInfoResponse;
+import io.jikkou.extension.aiven.api.data.KafkaTopicInfo;
 import io.jikkou.extension.aiven.api.data.KafkaTopicListResponse;
 import io.jikkou.kafka.models.V1KafkaTopic;
 import io.jikkou.kafka.reconciler.KafkaConfigsConfig;
@@ -94,33 +95,92 @@ public class AivenKafkaTopicCollector extends ContextualExtension implements Col
                     )
                 );
             }
-            List<V1KafkaTopic> items = response.topics()
+            List<String> topics = response.topics()
                 .stream()
-                .map(topicInfo -> api.getKafkaTopicInfo(topicInfo.topicName()))
-                .map(KafkaTopicInfoResponse::topic)
-                .filter(Objects::nonNull)
-                .map(topicInfo -> KafkaTopicAdapter.map(topicInfo, getConfigPredicate(configuration)))
-                .filter(selector::apply)
+                .map(KafkaTopicListResponse.KafkaTopicInfoGet::topicName)
                 .toList();
-            
-            return new GenericResourceList.Builder<V1KafkaTopic>().withItems(items).build();
+
+            return listAll(configuration, topics, selector, api);
 
         } catch (WebApplicationException e) {
-            String response;
-            try {
-                response = Jackson.JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
-                    .writeValueAsString(e.getResponse().readEntity(JsonNode.class));
-            } catch (JsonProcessingException ex) {
-                response = e.getResponse().readEntity(String.class);
-            }
-            throw new AivenApiClientException(String.format(
-                "Failed to list kafka topics. %s:%n%s",
-                e.getLocalizedMessage(),
-                response
-            ), e);
+            throw newListException(e);
         } finally {
             api.close(); // make sure api is closed after catching exception
         }
+    }
+
+    /**
+     * Lists only the given Kafka topics, by name.
+     *
+     * <p>In contrast to {@link #listAll(Configuration, Selector)}, this does not list every topic
+     * of the service first: it describes the given topics directly, so the number of API calls
+     * scales with the number of topics asked for and not with the size of the service. Topics that
+     * do not exist are skipped.
+     *
+     * @param configuration the configuration.
+     * @param topics        the names of the topics to describe.
+     * @return the list of described topics that exist.
+     */
+    public ResourceList<V1KafkaTopic> listAll(@NotNull Configuration configuration,
+                                              @NotNull List<String> topics) {
+        final AivenApiClient api = AivenApiClientFactory.create(apiClientConfig);
+        try {
+            return listAll(configuration, topics, Selectors.NO_SELECTOR, api);
+        } catch (WebApplicationException e) {
+            throw newListException(e);
+        } finally {
+            api.close(); // make sure api is closed after catching exception
+        }
+    }
+
+    private ResourceList<V1KafkaTopic> listAll(@NotNull Configuration configuration,
+                                               @NotNull List<String> topics,
+                                               @NotNull Selector selector,
+                                               @NotNull AivenApiClient api) {
+        List<V1KafkaTopic> items = topics
+            .stream()
+            .map(topic -> describeTopicOrEmptyOn404(api, topic))
+            .filter(Objects::nonNull)
+            .map(topicInfo -> KafkaTopicAdapter.map(topicInfo, getConfigPredicate(configuration)))
+            .filter(selector::apply)
+            .toList();
+
+        return new GenericResourceList.Builder<V1KafkaTopic>().withItems(items).build();
+    }
+
+    /**
+     * Describes a single topic, returning {@code null} if it does not exist. A requested topic may
+     * legitimately be missing (e.g. it is about to be created), which is not an error.
+     */
+    private KafkaTopicInfo describeTopicOrEmptyOn404(@NotNull AivenApiClient api,
+                                                     @NotNull String topic) {
+        try {
+            return api.getKafkaTopicInfo(topic).topic();
+        } catch (WebApplicationException e) {
+            if (isNotFound(e)) {
+                return null;
+            }
+            throw e;
+        }
+    }
+
+    private static boolean isNotFound(final WebApplicationException exception) {
+        return exception.getResponse().getStatus() == 404;
+    }
+
+    private AivenApiClientException newListException(@NotNull WebApplicationException e) {
+        String response;
+        try {
+            response = Jackson.JSON_OBJECT_MAPPER.writerWithDefaultPrettyPrinter()
+                .writeValueAsString(e.getResponse().readEntity(JsonNode.class));
+        } catch (JsonProcessingException ex) {
+            response = e.getResponse().readEntity(String.class);
+        }
+        return new AivenApiClientException(String.format(
+            "Failed to list kafka topics. %s:%n%s",
+            e.getLocalizedMessage(),
+            response
+        ), e);
     }
 
     /**
