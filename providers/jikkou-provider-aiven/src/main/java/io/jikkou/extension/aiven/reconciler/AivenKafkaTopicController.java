@@ -21,6 +21,8 @@ import io.jikkou.core.config.Configuration;
 import io.jikkou.core.extension.ContextualExtension;
 import io.jikkou.core.extension.ExtensionContext;
 import io.jikkou.core.models.Configs;
+import io.jikkou.core.models.ObjectMeta;
+import io.jikkou.core.models.ResourceList;
 import io.jikkou.core.models.change.ResourceChange;
 import io.jikkou.core.reconciler.ChangeExecutor;
 import io.jikkou.core.reconciler.ChangeHandler;
@@ -160,14 +162,26 @@ public final class AivenKafkaTopicController
         // Get the list of remote resources that are candidates for this reconciliation
         collector.init(extensionContext().contextForExtension(AivenKafkaTopicCollector.class));
 
-        List<V1KafkaTopic> actualKafkaTopics = collector.listAll(configuration, Selectors.NO_SELECTOR)
+        boolean deleteOrphans = Config.IS_DELETE_ORPHANS_ENABLED.get(context.configuration());
+
+        // Deleting orphans requires knowing every topic of the service, so the whole service must be
+        // described. Otherwise only the expected topics are described: the Aiven API has no bulk
+        // describe endpoint, so describing the whole service costs one round-trip per topic on it.
+        ResourceList<V1KafkaTopic> describedKafkaTopics = deleteOrphans
+            ? collector.listAll(configuration, Selectors.NO_SELECTOR)
+            : collector.listAll(configuration, expectedKafkaTopics.stream()
+                .map(V1KafkaTopic::getMetadata)
+                .map(ObjectMeta::getName)
+                .toList());
+
+        List<V1KafkaTopic> actualKafkaTopics = describedKafkaTopics
             .stream()
             .filter(context.selector()::apply)
             .toList();
 
         TopicChangeComputer changeComputer = new TopicChangeComputer(
             topicDeleteExcludePatterns,
-            Config.IS_DELETE_ORPHANS_ENABLED.get(context.configuration()),
+            deleteOrphans,
             Config.IS_CONFIG_DELETE_ORPHANS_ENABLED.get(context.configuration())
         );
 
