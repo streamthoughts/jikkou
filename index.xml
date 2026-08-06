@@ -1,4 +1,18 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou — Resource as Code for Apache Kafka on Jikkou</title><link>https://www.jikkou.io/</link><description>Recent content in Jikkou — Resource as Code for Apache Kafka on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Migrating to Jikkou 1.0</title><link>https://www.jikkou.io/docs/how-to-guides/migration/migrate-to-1.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/migration/migrate-to-1.0/</guid><description>&lt;p>Jikkou 1.0.0 is a major release. The good news: the project&amp;rsquo;s first real breaking change — the move from &lt;code>io.streamthoughts.jikkou.*&lt;/code> to &lt;code>io.jikkou.*&lt;/code> — ships with a runtime deprecation shim, so most existing setups will run unchanged with warnings while you migrate at your own pace.&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Jikkou — Resource as Code for Apache Kafka on Jikkou</title><link>https://www.jikkou.io/</link><description>Recent content in Jikkou — Resource as Code for Apache Kafka on Jikkou</description><generator>Hugo</generator><language>en</language><atom:link href="https://www.jikkou.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Release v1.1.0</title><link>https://www.jikkou.io/docs/releases/release-v1.1.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/releases/release-v1.1.0/</guid><description>&lt;h2 id="-jikkou-110">🚀 Jikkou 1.1.0&lt;/h2>
+&lt;p>&lt;a href="https://github.com/streamthoughts/jikkou/releases/tag/v1.1.0">Jikkou 1.1.0&lt;/a> is out.&lt;/p>
+&lt;p>Where 1.0.0 was about the shape of the project (package rename, API contract, new providers), this
+one is about running Jikkou where it actually lives: in a CI pipeline, behind a corporate proxy, and
+against Kafka 4.x clusters. Highlights:&lt;/p>
+&lt;ul>
+&lt;li>🔎 &lt;code>jikkou diff --fail-on-changes&lt;/code> for scheduled drift checks, with a dedicated exit code.&lt;/li>
+&lt;li>🧾 A ready-made policy pack under &lt;code>examples/policies&lt;/code>.&lt;/li>
+&lt;li>🧵 Kafka 4.x share groups (KIP-932) and declarative group configuration.&lt;/li>
+&lt;li>🌐 HTTP proxy support and custom request headers on all REST-based providers.&lt;/li>
+&lt;li>🧩 Schema Registry subjects are now updated when only their references change.&lt;/li>
+&lt;li>🤖 An official agent skill, so coding assistants drive Jikkou safely instead of guessing.&lt;/li>
+&lt;/ul>
+&lt;p>Upgrading from 1.0.x needs no configuration changes. One behaviour change is worth knowing about
+before you apply: see the note on consumer group configs below.&lt;/p></description></item><item><title>Migrating to Jikkou 1.0</title><link>https://www.jikkou.io/docs/how-to-guides/migration/migrate-to-1.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://www.jikkou.io/docs/how-to-guides/migration/migrate-to-1.0/</guid><description>&lt;p>Jikkou 1.0.0 is a major release. The good news: the project&amp;rsquo;s first real breaking change — the move from &lt;code>io.streamthoughts.jikkou.*&lt;/code> to &lt;code>io.jikkou.*&lt;/code> — ships with a runtime deprecation shim, so most existing setups will run unchanged with warnings while you migrate at your own pace.&lt;/p>
 &lt;p>This guide walks through the upgrade end to end.&lt;/p>
 &lt;h2 id="before-you-upgrade">Before You Upgrade&lt;/h2>
 &lt;p>A short checklist before you start:&lt;/p>
