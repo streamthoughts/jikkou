@@ -111,7 +111,7 @@
 
         <!-- Tests -->
         <junit-bom.version>6.0.2</junit-bom.version>
-        <testcontainer.version>2.0.3</testcontainer.version>
+        <testcontainer.version>2.0.5</testcontainer.version>
         <mockwebserver.version>5.3.2</mockwebserver.version>
         <!-- Dependencies -->
         <kafka.version>4.3.1</kafka.version>
