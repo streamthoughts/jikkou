@@ -199,6 +199,10 @@ body.td-home .td-footer {
 
     .jk-slot { display: inline-grid; vertical-align: bottom; }
 
+    // Own line: the slot is sized on the widest word, so keeping the tail
+    // inline leaves a ragged gap whenever a shorter word is active.
+    .jk-rotator-tail { display: block; }
+
     .jk-word {
       grid-area: 1 / 1;
       white-space: nowrap;

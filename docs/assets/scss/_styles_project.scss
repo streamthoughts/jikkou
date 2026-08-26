@@ -161,8 +161,15 @@ footer {
     }
 }
 
+// Hidden on mobile: the banner is only styled from 768px up, and the raw
+// text + star button eat vertical space on small screens.
+#top-head-promo {
+    display: none;
+}
+
 @media (min-width: 768px) {
     #top-head-promo {
+        display: block;
         background: linear-gradient(90deg, darken($dark-base, 2%), $dark-surface, darken($dark-base, 2%));
         border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         padding: 0.5rem 0;
