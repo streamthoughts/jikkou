@@ -7,6 +7,7 @@
 package io.jikkou.rest.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.jikkou.core.annotation.Reflectable;
 import io.jikkou.core.selector.SelectorMatchingStrategy;
 import java.beans.ConstructorProperties;
 import java.util.Collections;
@@ -24,6 +25,7 @@ import javax.annotation.Nullable;
  * @param selectorMatchingStrategy The selector matching strategy.
  * @param provider The provider name for selecting specific provider instance.
  */
+@Reflectable
 public record ResourceListRequest(@Nullable @JsonProperty("options") Map<String, Object> options,
                                   @Nullable @JsonProperty("selectors") List<String> selectors,
                                   @Nullable @JsonProperty("selectors_match") SelectorMatchingStrategy selectorMatchingStrategy,
