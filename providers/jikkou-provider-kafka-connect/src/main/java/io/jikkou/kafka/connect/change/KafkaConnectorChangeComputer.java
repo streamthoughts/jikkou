@@ -57,8 +57,13 @@ public final class KafkaConnectorChangeComputer extends ResourceChangeComputer<S
             changes.add(StateChange.with(DATA_CONNECTOR_CLASS, getConnectorClass(before), getConnectorClass(after)));
             // Compute change for 'tasks.max'
             changes.add(StateChange.with(DATA_TASKS_MAX, getTasksMax(before), getTasksMax(after)));
-            // Compute change for 'state'
-            changes.add(StateChange.with(DATA_STATE, getState(before), getState(after)));
+            // Compute change for 'state'. The state is optional: when an existing connector declares no desired
+            // state, keep its current one rather than reporting a change that no API call can apply.
+            if (before != null && after != null && getState(after) == null) {
+                changes.add(StateChange.none(DATA_STATE, getState(before)));
+            } else {
+                changes.add(StateChange.with(DATA_STATE, getState(before), getState(after)));
+            }
             // Compute change for 'config'
             changes.addAll(ChangeComputer.computeChanges(getConfig(before), getConfig(after), true)
                 .stream()

@@ -27,11 +27,11 @@ import io.jikkou.kafka.connect.api.data.ConnectorInfoResponse;
 import io.jikkou.kafka.connect.api.data.ErrorResponse;
 import io.jikkou.kafka.connect.models.KafkaConnectorState;
 import jakarta.ws.rs.WebApplicationException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -66,37 +66,58 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler {
     private Stream<ChangeResponse> handleChange(ResourceChange change) {
         return switch (change.getSpec().getOp()) {
             case NONE -> Stream.empty(); // no change of these types should be handled by this class.
-            case REPLACE -> null;
+            case REPLACE -> Stream.empty(); // connectors are never replaced.
             case UPDATE -> updateConnector(change);
             case CREATE -> createConnector(change);
             case DELETE -> deleteConnector(change);
         };
     }
 
+    /**
+     * Updates an existing connector: its configuration using PUT /connectors/{name}/config and/or
+     * its target state using the pause, stop and resume endpoints.
+     */
     @NotNull
     private Stream<ChangeResponse> updateConnector(ResourceChange change) {
-        if (!isStateOnlyChange(change)) {
-            return updateConnectorConfig(change);
+        final String connectorName = change.getMetadata().getName();
+        final SpecificStateChange<KafkaConnectorState> stateChange = getState(change);
+        final KafkaConnectorState desiredState = stateChange.getOp() != Operation.NONE ? stateChange.getAfter() : null;
+
+        final boolean configChanged = hasConfigChange(change);
+        final Runnable updateConfig = () -> api.createOrUpdateConnector(connectorName, buildConnectorConfig(change));
+        final List<Runnable> actions = new ArrayList<>();
+
+        // PUT /connectors/{name}/config never changes the target state of a connector, so a state transition
+        // must be sent explicitly. Pause or stop the connector before updating its config so that tasks never
+        // run with the new config, and resume it only once the new config is applied.
+        switch (desiredState) {
+            case PAUSED -> {
+                actions.add(() -> api.pauseConnector(connectorName));
+                if (configChanged) actions.add(updateConfig);
+            }
+            case STOPPED -> {
+                actions.add(() -> api.stopConnector(connectorName));
+                if (configChanged) actions.add(updateConfig);
+            }
+            case RUNNING -> {
+                if (configChanged) actions.add(updateConfig);
+                actions.add(() -> api.resumeConnector(connectorName));
+            }
+            case UNASSIGNED, RESTARTING, FAILED -> {
+                return Stream.of(toChangeResponse(change, CompletableFuture.failedFuture(new IllegalArgumentException(
+                    String.format(
+                        "Cannot transition connector '%s' to state %s: only RUNNING, PAUSED and STOPPED are supported",
+                        connectorName, desiredState)
+                ))));
+            }
+            case null -> {
+                if (configChanged) actions.add(updateConfig);
+            }
         }
-        SpecificStateChange<KafkaConnectorState> stateChange = getState(change);
 
-        KafkaConnectorState newState = stateChange.getAfter();
-
-        String connectorName = change.getMetadata().getName();
-        Optional<CompletableFuture<Void>> future = switch (newState) {
-            case PAUSED -> Optional.of(CompletableFuture
-                    .runAsync(() -> api.pauseConnector(connectorName)));
-            case STOPPED -> Optional.of(CompletableFuture
-                    .runAsync(() -> api.stopConnector(connectorName)));
-            case RUNNING -> Optional.of(CompletableFuture
-                    .runAsync(() -> api.resumeConnector(connectorName)));
-            // new state cannot be one of:
-            case UNASSIGNED, RESTARTING, FAILED -> Optional.empty();
-        };
-
-        return future.map(f -> toChangeResponse(change, f)).stream();
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> actions.forEach(Runnable::run));
+        return Stream.of(toChangeResponse(change, future));
     }
-
 
     @NotNull
     private Stream<ChangeResponse> deleteConnector(ResourceChange change) {
@@ -134,20 +155,6 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler {
     }
 
     /**
-     * Updates an existing connector's configuration using PUT /connectors/{name}/config.
-     */
-    @NotNull
-    private Stream<ChangeResponse> updateConnectorConfig(ResourceChange change) {
-        final Map<String, Object> configAsMap = buildConnectorConfig(change);
-        CompletableFuture<ConnectorInfoResponse> future = CompletableFuture.supplyAsync(() ->
-                api.createOrUpdateConnector(change.getMetadata().getName(), configAsMap)
-        );
-
-        ChangeResponse response = toChangeResponse(change, future);
-        return Stream.of(response);
-    }
-
-    /**
      * {@inheritDoc}
      **/
     @Override
@@ -156,20 +163,10 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler {
     }
 
     @VisibleForTesting
-    static boolean isStateOnlyChange(ResourceChange change) {
-        if (change.getSpec().getOp() != Operation.UPDATE)
-            return false;
-
-        if (getConnectorClass(change).getOp() != Operation.NONE)
-            return false;
-
-        if (getTasksMax(change).getOp() != Operation.NONE)
-            return false;
-
-        if (Change.computeOperation(getConfig(change)) != Operation.NONE)
-            return false;
-
-        return getState(change).getOp() != Operation.NONE;
+    static boolean hasConfigChange(ResourceChange change) {
+        return getConnectorClass(change).getOp() != Operation.NONE
+            || getTasksMax(change).getOp() != Operation.NONE
+            || Change.computeOperation(getConfig(change)) != Operation.NONE;
     }
 
     private Map<String, Object> buildConnectorConfig(final ResourceChange change) {
