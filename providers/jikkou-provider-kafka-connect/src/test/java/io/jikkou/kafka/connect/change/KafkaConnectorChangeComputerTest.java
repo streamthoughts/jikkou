@@ -143,7 +143,54 @@ class KafkaConnectorChangeComputerTest {
     }
 
     @Test
-    void shouldReturnFalseForStateOnlyGivenNoChange() {
+    void shouldIgnoreStateChangeGivenNoDesiredState() {
+        // Given
+        V1KafkaConnector newConnector = V1KafkaConnector
+                .builder()
+                .withMetadata(ObjectMeta
+                        .builder()
+                        .withName(TEST_CONNECTOR_NAME)
+                        .withLabel("kafka.jikkou.io/connect-cluster", TEST_CONNECTOR_NAME)
+                        .build()
+                )
+                .withSpec(V1KafkaConnectorSpec
+                        .builder()
+                        .withConnectorClass("FileStreamSink")
+                        .withTasksMax(1)
+                        .withConfig(Map.of("topics", "connect-test"))
+                        .build()
+                )
+                .build();
+        V1KafkaConnector oldConnector = newConnector
+                .toBuilder()
+                .withSpec(newConnector.getSpec().toBuilder().withState(KafkaConnectorState.PAUSED).build())
+                .build();
+        KafkaConnectorChangeComputer computer = new KafkaConnectorChangeComputer();
+
+        // When
+        List<ResourceChange> results = computer.computeChanges(
+                List.of(oldConnector),
+                List.of(newConnector));
+
+        // Then
+        ResourceChange expected = GenericResourceChange
+                .builder(V1KafkaConnector.class)
+                .withMetadata(newConnector.getMetadata())
+                .withSpec(ResourceChangeSpec
+                        .builder()
+                        .withOperation(Operation.NONE)
+                        .withChange(StateChange.none(KafkaConnectorChangeComputer.DATA_CONNECTOR_CLASS, "FileStreamSink"))
+                        .withChange(StateChange.none(KafkaConnectorChangeComputer.DATA_TASKS_MAX, 1))
+                        .withChange(StateChange.none(KafkaConnectorChangeComputer.DATA_STATE, KafkaConnectorState.PAUSED))
+                        .withChange(StateChange.none("config.topics", "connect-test"))
+                        .build()
+                )
+                .build();
+        Assertions.assertEquals(List.of(expected), results);
+    }
+
+    @Test
+    void shouldReturnFalseForConfigChangeGivenNoChange() {
         // Given
         ResourceChange change = GenericResourceChange
                 .builder()
@@ -157,14 +204,14 @@ class KafkaConnectorChangeComputerTest {
                 )
                 .build();
         // When
-        boolean stateOnlyChange = KafkaConnectorChangeHandler.isStateOnlyChange(change);
+        boolean configChange = KafkaConnectorChangeHandler.hasConfigChange(change);
 
         // Then
-        Assertions.assertFalse(stateOnlyChange);
+        Assertions.assertFalse(configChange);
     }
 
     @Test
-    void shouldReturnFalseForStateOnlyGivenMaxTasksUpdate() {
+    void shouldReturnTrueForConfigChangeGivenMaxTasksUpdate() {
         // Given
         ResourceChange change = GenericResourceChange
                 .builder()
@@ -178,14 +225,14 @@ class KafkaConnectorChangeComputerTest {
                 )
                 .build();
         // When
-        boolean stateOnlyChange = KafkaConnectorChangeHandler.isStateOnlyChange(change);
+        boolean configChange = KafkaConnectorChangeHandler.hasConfigChange(change);
 
         // Then
-        Assertions.assertFalse(stateOnlyChange);
+        Assertions.assertTrue(configChange);
     }
 
     @Test
-    void shouldReturnFalseForStateOnlyGivenConnectorClassUpdate() {
+    void shouldReturnTrueForConfigChangeGivenConnectorClassUpdate() {
         // Given
         ResourceChange change = GenericResourceChange
                 .builder()
@@ -199,14 +246,14 @@ class KafkaConnectorChangeComputerTest {
                 )
                 .build();
         // When
-        boolean stateOnlyChange = KafkaConnectorChangeHandler.isStateOnlyChange(change);
+        boolean configChange = KafkaConnectorChangeHandler.hasConfigChange(change);
 
         // Then
-        Assertions.assertFalse(stateOnlyChange);
+        Assertions.assertTrue(configChange);
     }
 
     @Test
-    void shouldReturnTrueForStateOnly() {
+    void shouldReturnFalseForConfigChangeGivenStateOnlyUpdate() {
         // Given
         ResourceChange change = GenericResourceChange
                 .builder()
@@ -220,10 +267,10 @@ class KafkaConnectorChangeComputerTest {
                 )
                 .build();
         // When
-        boolean stateOnlyChange = KafkaConnectorChangeHandler.isStateOnlyChange(change);
+        boolean configChange = KafkaConnectorChangeHandler.hasConfigChange(change);
 
         // Then
-        Assertions.assertTrue(stateOnlyChange);
+        Assertions.assertFalse(configChange);
     }
 
 }
