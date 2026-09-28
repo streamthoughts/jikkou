@@ -7,6 +7,7 @@
 package io.jikkou.rest.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.jikkou.core.annotation.Reflectable;
 import io.jikkou.core.models.HasMetadata;
 import io.jikkou.core.selector.SelectorMatchingStrategy;
 import java.beans.ConstructorProperties;
@@ -25,6 +26,7 @@ import javax.annotation.Nullable;
  * @param providers       the list of provider names for batch operations (mutually exclusive with provider).
  * @param continueOnError whether to continue on error during batch operations (default: false).
  */
+@Reflectable
 public record ResourceReconcileRequest(
         @Nullable @JsonProperty("params") Params params,
         @Nullable @JsonProperty("resources") List<? extends HasMetadata> resources,
@@ -98,6 +100,7 @@ public record ResourceReconcileRequest(
      * @param options     the query options.
      * @param selectors   list of selector expressions used for including or excluding resources.
      */
+    @Reflectable
     public record Params(
             @Nullable @JsonProperty("annotations") Map<String, Object> annotations,
             @Nullable @JsonProperty("labels") Map<String, Object> labels,

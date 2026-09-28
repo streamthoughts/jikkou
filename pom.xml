@@ -13,7 +13,7 @@
     <groupId>io.jikkou</groupId>
     <artifactId>jikkou-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
     <modules>
         <module>resource-generator</module>
         <module>core</module>
@@ -110,16 +110,16 @@
         <!-- END Maven plugin versions -->
 
         <!-- Tests -->
-        <junit-bom.version>6.0.2</junit-bom.version>
-        <testcontainer.version>2.0.3</testcontainer.version>
+        <junit-bom.version>6.1.3</junit-bom.version>
+        <testcontainer.version>2.0.5</testcontainer.version>
         <mockwebserver.version>5.3.2</mockwebserver.version>
         <!-- Dependencies -->
-        <kafka.version>4.3.0</kafka.version>
+        <kafka.version>4.3.1</kafka.version>
         <picocli.version>4.7.7</picocli.version>
         <jackson.version>2.21.4</jackson.version>
         <jinjava.version>2.8.3</jinjava.version>
         <lombok.version>1.18.42</lombok.version>
-        <config.version>1.4.3</config.version>
+        <config.version>1.4.9</config.version>
         <annotations.version>26.0.2-1</annotations.version>
         <jakarta.validation-api.version>3.1.1</jakarta.validation-api.version>
         <jakarta.activation-api.version>2.1.3</jakarta.activation-api.version>
@@ -132,7 +132,7 @@
         <postgresql.version>42.7.12</postgresql.version>
         <!-- Logging -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
-        <logback.version>1.5.34</logback.version>
+        <logback.version>1.6.3</logback.version>
         <jul-to-slf4j.version>2.0.17</jul-to-slf4j.version>
         <!-- Build -->
         <graal-sdk.version>25.0.2</graal-sdk.version>
@@ -140,13 +140,13 @@
         <spotless.version>3.2.1</spotless.version>
         <app.distribution.directory>${project.parent.basedir}/dist</app.distribution.directory>
         <appassembler-maven-plugin.version>2.1.0</appassembler-maven-plugin.version>
-        <protobuf-java.version>4.33.5</protobuf-java.version>
+        <protobuf-java.version>4.36.0</protobuf-java.version>
         <jsonschema-generator.version>4.38.0</jsonschema-generator.version>
         <!-- JaCoCo coverage minimum (0.0 = off, 0.50 = 50%). Modules can override. -->
         <jacoco.check.minimum>0.0</jacoco.check.minimum>
         <mockito-core.version>5.21.0</mockito-core.version>
         <junit-jupiter.version>1.21.4</junit-jupiter.version>
-        <awssdk.version>2.42.31</awssdk.version>
+        <awssdk.version>2.51.2</awssdk.version>
         <!-- Micronaut (centralized - used by cli and server modules) -->
         <micronaut.version>4.10.14</micronaut.version>
     </properties>

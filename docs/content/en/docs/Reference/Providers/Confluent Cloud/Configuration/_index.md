@@ -43,6 +43,13 @@ jikkou {
       nonProxyHosts = "localhost,127.0.0.1"
       # Enable debug logging (default: false)
       debugLoggingEnabled = false
+
+      # Additional HTTP headers sent on every request to the Confluent Cloud REST API.
+      # Applied last, so these override headers Jikkou sets itself, including 'Authorization'.
+      clientHeaders {
+        X-Api-Gateway-Key = "my-gateway-key"
+        X-Tenant = "acme"
+      }
     }
   }
 }
@@ -61,11 +68,33 @@ jikkou {
 | `proxyPassword`      | String  | No       |                                | Password for proxy Basic authentication.                         |
 | `nonProxyHosts`      | String  | No       |                                | Comma-separated hosts that bypass the proxy, e.g. `localhost,*.internal`. |
 | `debugLoggingEnabled`| Boolean | No       | `false`                        | Enable debug logging for REST API calls.                         |
+| `clientHeaders`      | Map     | No       | `{}`                           | Additional HTTP headers sent on every request. Applied last, so they override headers Jikkou sets itself, including `Authorization`. |
 
 > If `proxyUrl` is not set, Jikkou honors the standard JVM proxy system properties
 > (`-Dhttps.proxyHost`, `-Dhttp.proxyHost`, `-Dhttp.proxyUser`, `-Dhttp.proxyPassword`,
 > `-Dhttp.nonProxyHosts`), which can be supplied via `JAVA_TOOL_OPTIONS`. The OS-level
 > `http_proxy` / `https_proxy` environment variables are **not** read by the JVM and have no effect.
+
+### Custom HTTP headers
+
+The `clientHeaders` property attaches arbitrary HTTP headers to every request Jikkou
+sends to the Confluent Cloud REST API. It is useful for API gateway keys, tenant
+identifiers, and tracing headers.
+
+```hocon
+clientHeaders {
+  X-Api-Gateway-Key = "my-gateway-key"
+  X-Tenant = "acme"
+}
+```
+
+Custom headers are applied **last**, so a header set here replaces the one Jikkou would
+otherwise send under the same name, including the `Authorization` header built from
+`apiKey` and `apiSecret`. Header names are matched case-insensitively.
+
+> When debug logging is enabled, header values are redacted if the header name is
+> `Authorization`, `Proxy-Authorization`, `Cookie`, or `Set-Cookie`, or if it contains
+> `token`, `secret`, `key`, or `password`. Header names are always logged in full.
 
 ### Creating a Cloud API Key
 

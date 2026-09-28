@@ -60,7 +60,7 @@ class SchemaRegistryApiFactoryTest {
                 () -> SSLConfig.from(Configuration.empty()),
                 () -> ProxyConfig.from(Configuration.empty()),
                 false,
-                null
+                Map.of()
         );
 
         // When
@@ -108,7 +108,7 @@ class SchemaRegistryApiFactoryTest {
                 () -> SSLConfig.from(Configuration.empty()),
                 () -> ProxyConfig.from(Configuration.empty()),
                 false,
-                null
+                Map.of()
         );
 
         // When
@@ -137,7 +137,7 @@ class SchemaRegistryApiFactoryTest {
                 () -> SSLConfig.from(Configuration.empty()),
                 () -> ProxyConfig.from(Configuration.empty()),
                 false,
-                null
+                Map.of()
         );
 
         // When
@@ -160,7 +160,7 @@ class SchemaRegistryApiFactoryTest {
                 () -> SSLConfig.from(Configuration.empty()),
                 () -> ProxyConfig.from(Configuration.empty()),
                 false,
-                null
+                Map.of()
         );
 
         // When
@@ -218,7 +218,7 @@ class SchemaRegistryApiFactoryTest {
                     ))),
                     () -> ProxyConfig.from(Configuration.empty()),
                     false,
-                    null
+                    Map.of()
             );
 
             // When
@@ -248,7 +248,7 @@ class SchemaRegistryApiFactoryTest {
                 .build();
         schemaRegistryMockServer.setDispatcher(schemaRegistryHTTPDispatcher);
 
-        HashMap<String, Object> clientHeaders = new HashMap<>();
+        HashMap<String, String> clientHeaders = new HashMap<>();
         clientHeaders.put("custom-header-1", "custom-value-1");
         clientHeaders.put("custom-header-2", "custom-value-2");
 
@@ -275,10 +275,46 @@ class SchemaRegistryApiFactoryTest {
 
         var actualHeaders = schemaRegistryMockServer.takeRequest().getHeaders();
 
-        for (Map.Entry<String, Object> header : clientHeaders.entrySet()) {
+        for (Map.Entry<String, String> header : clientHeaders.entrySet()) {
             String actualValue = actualHeaders.get(header.getKey());
             Assertions.assertEquals(header.getValue(), actualValue);
         }
+    }
+
+    @Test
+    @DisplayName("Should let a custom Authorization header override basicauth")
+    public void shouldLetCustomAuthorizationHeaderOverrideBasicAuth() throws InterruptedException {
+        // Given
+        HttpPathBasedDispatcher dispatcher = HttpPathBasedDispatcher.builder()
+                .forPath("/subjects/subject-value/versions", new MockResponse.Builder()
+                        .code(200)
+                        .addHeader("Content-Type", "application/vnd.schemaregistry.v1+json")
+                        .body("[]")
+                        .build())
+                .build();
+        schemaRegistryMockServer.setDispatcher(dispatcher);
+
+        SchemaRegistryClientConfig config = new SchemaRegistryClientConfig(
+                List.of(String.format("http://%s:%s", schemaRegistryMockServer.getHostName(), schemaRegistryMockServer.getPort())),
+                "generic",
+                AuthMethod.BASICAUTH,
+                () -> "username",
+                () -> "password",
+                () -> SSLConfig.from(Configuration.empty()),
+                () -> ProxyConfig.from(Configuration.empty()),
+                false,
+                Map.of("Authorization", "Bearer custom-token")
+        );
+
+        // When
+        try (SchemaRegistryApi schemaRegistryApi = SchemaRegistryApiFactory.create(config)) {
+            schemaRegistryApi.getAllSubjectVersions("subject-value");
+        }
+
+        // Then
+        var actualHeaders = schemaRegistryMockServer.takeRequest().getHeaders();
+        Assertions.assertEquals("Bearer custom-token", actualHeaders.get("Authorization"));
+        Assertions.assertEquals(1, actualHeaders.values("Authorization").size());
     }
 
     @AfterAll

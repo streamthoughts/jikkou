@@ -9,8 +9,10 @@ package io.jikkou.kafka.connect.api;
 import io.jikkou.common.utils.Enums;
 import io.jikkou.core.config.ConfigProperty;
 import io.jikkou.core.config.Configuration;
+import io.jikkou.http.client.ClientHeadersConfig;
 import io.jikkou.http.client.proxy.ProxyConfig;
 import io.jikkou.http.client.ssl.SSLConfig;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public record KafkaConnectClientConfig(
@@ -21,7 +23,8 @@ public record KafkaConnectClientConfig(
     Supplier<String> basicAuthPassword,
     Supplier<SSLConfig> sslConfig,
     Supplier<ProxyConfig> proxyConfig,
-    Boolean debugLoggingEnabled
+    Boolean debugLoggingEnabled,
+    Map<String, String> clientHeaders
 ) {
 
     public static final ConfigProperty<String> KAFKA_CONNECT_NAME = ConfigProperty
@@ -65,7 +68,8 @@ public record KafkaConnectClientConfig(
             () -> KAFKA_CONNECT_BASIC_AUTH_PASSWORD.get(configuration),
             () -> SSLConfig.from(configuration),
             () -> ProxyConfig.from(configuration),
-            KAFKA_CONNECT_DEBUG_LOGGING_ENABLED.get(configuration)
+            KAFKA_CONNECT_DEBUG_LOGGING_ENABLED.get(configuration),
+            ClientHeadersConfig.from(configuration)
         );
     }
 }

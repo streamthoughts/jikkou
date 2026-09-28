@@ -35,6 +35,10 @@ public class AivenApiClientFactory {
 
         builder.header("Authorization", "Bearer " + config.tokenAuth());
         builder.proxyConfig(config.proxyConfig());
+
+        // Applied last so that user-supplied headers override the ones set above.
+        builder.clientHeaders(config.clientHeaders());
+
         return new AivenApiClient(
                 builder.build(AivenApi.class),
                 config.project(),

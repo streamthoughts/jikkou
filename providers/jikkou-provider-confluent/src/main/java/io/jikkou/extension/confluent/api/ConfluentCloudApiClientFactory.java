@@ -42,6 +42,10 @@ public class ConfluentCloudApiClientFactory {
 
         builder.header("Authorization", "Basic " + credentials);
         builder.proxyConfig(config.proxyConfig());
+
+        // Applied last so that user-supplied headers override the ones set above.
+        builder.clientHeaders(config.clientHeaders());
+
         return new ConfluentCloudApiClient(
             builder.build(ConfluentCloudApi.class),
             config.crnPattern()

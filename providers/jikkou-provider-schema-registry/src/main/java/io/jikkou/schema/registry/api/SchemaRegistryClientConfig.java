@@ -21,7 +21,7 @@ public record SchemaRegistryClientConfig(
     Supplier<SSLConfig> sslConfig,
     Supplier<ProxyConfig> proxyConfig,
     Boolean debugLoggingEnabled,
-    Map<String, Object> schemaRegistryClientHeaders
+    Map<String, String> clientHeaders
 ) {
 
     /**
