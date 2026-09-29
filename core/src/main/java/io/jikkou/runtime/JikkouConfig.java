@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +42,9 @@ public final class JikkouConfig implements Configuration {
     private static final String DEFAULT_CONFIG = "application.conf";
     private static final String ROOT_CONFIG_KEY = "jikkou";
     private static final String CONFIG_FILE_SYSTEM_PROPERTY = "config.file";
+
+    private static final Pattern SENSITIVE_KEY_PATTERN =
+            Pattern.compile(".*(password|secret|token|private[._-]?key|credential).*", Pattern.CASE_INSENSITIVE);
 
     private final Config config;
 
@@ -306,6 +310,25 @@ public final class JikkouConfig implements Configuration {
             return getConfAsMap(config);
         }
         return config.root().unwrapped();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Values of keys matching a sensitive pattern (e.g. password, secret, token) are redacted
+     * to avoid leaking secrets when the configuration is logged.
+     */
+    @Override
+    public String toPrettyString(String delimiter) {
+        Map<String, Object> confAsMap = new TreeMap<>(asMap());
+        return confAsMap.entrySet()
+                .stream()
+                .map(e -> e.getKey() + " = " + redactIfSensitive(e.getKey(), e.getValue()))
+                .collect(Collectors.joining(delimiter));
+    }
+
+    private static Object redactIfSensitive(final String key, final Object value) {
+        return SENSITIVE_KEY_PATTERN.matcher(key).matches() ? "******" : value;
     }
 
     /**
