@@ -157,16 +157,16 @@ class UpdateSchemaSubjectChangeHandlerTest {
 
         List<Map<String, Object>> referencesBefore = List.of(
                 Map.of(
-                        "name", " com.swissquote.eforex.efx.fundamentals.kafka.shared.Metadata",
-                        "subject", "com.swissquote.eforex.efx.fundamentals.kafka.shared.Metadata",
+                        "name", "com.example.kafka.shared.Metadata",
+                        "subject", "com.example.kafka.shared.Metadata",
                         "version", 1
                 )
         );
 
         List<Map<String, Object>> referencesAfter = List.of(
                 Map.of(
-                        "name", " com.swissquote.eforex.efx.fundamentals.kafka.shared.Metadata",
-                        "subject", "com.swissquote.eforex.efx.fundamentals.kafka.shared.Metadata",
+                        "name", " com.example.kafka.shared.Metadata",
+                        "subject", "com.example.kafka.shared.Metadata",
                         "version", 2
                 )
         );

@@ -69,6 +69,13 @@ jikkou {
           proxyPassword = null
           # Comma-separated hosts that bypass the proxy, e.g. 'localhost,127.0.0.1,*.internal'.
           nonProxyHosts = "localhost,127.0.0.1"
+
+          # Additional HTTP headers sent on every request to this Kafka Connect cluster.
+          # Applied last, so these override headers Jikkou sets itself, including 'Authorization'.
+          clientHeaders {
+            X-Api-Gateway-Key = "my-gateway-key"
+            X-Tenant = "acme"
+          }
         }
       ]
     }
@@ -94,4 +101,29 @@ If `proxyUrl` is not set, Jikkou honors the standard JVM proxy system properties
 {{% alert title="Note" color="info" %}}
 The OS-level `http_proxy` / `https_proxy` environment variables are **not** read by the JVM
 and have no effect. Use `proxyUrl` or the JVM system properties above.
+{{% /alert %}}
+
+## Custom HTTP headers
+
+The `clientHeaders` property attaches arbitrary HTTP headers to every request Jikkou
+sends to a Kafka Connect cluster. It is useful for API gateway keys, tenant identifiers,
+and tracing headers. It is set per cluster, inside a `clusters` entry.
+
+```hocon
+clientHeaders {
+  X-Api-Gateway-Key = "my-gateway-key"
+  X-Tenant = "acme"
+}
+```
+
+Custom headers are applied **last**, so a header set here replaces the one Jikkou would
+otherwise send under the same name, including `Authorization`. Setting `Authorization`
+through `clientHeaders` is the supported way to use a bearer token or another
+authentication scheme that `authMethod` does not cover. Header names are matched
+case-insensitively.
+
+{{% alert title="Note" color="info" %}}
+When debug logging is enabled, header values are redacted if the header name is
+`Authorization`, `Proxy-Authorization`, `Cookie`, or `Set-Cookie`, or if it contains
+`token`, `secret`, `key`, or `password`. Header names are always logged in full.
 {{% /alert %}}

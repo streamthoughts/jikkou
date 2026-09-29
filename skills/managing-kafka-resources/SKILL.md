@@ -1,6 +1,6 @@
 ---
 name: managing-kafka-resources
-description: Use when managing Apache Kafka topics, ACLs, quotas, users, consumer groups, Schema Registry subjects, Kafka Connect connectors, or Aiven, Confluent Cloud, AWS Glue, and Apache Iceberg resources declaratively with the Jikkou CLI: creating, inspecting, or changing resources, previewing changes before apply, or diagnosing Kafka misconfigurations.
+description: "Use when managing Apache Kafka topics, ACLs, quotas, users, consumer groups, Schema Registry subjects, Kafka Connect connectors, or Aiven, Confluent Cloud, AWS Glue, and Apache Iceberg resources declaratively with the Jikkou CLI: creating, inspecting, or changing resources, previewing changes before apply, or diagnosing Kafka misconfigurations."
 ---
 
 # Jikkou: Resource as Code for Apache Kafka

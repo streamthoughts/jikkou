@@ -15,6 +15,7 @@ import io.jikkou.core.extension.ExtensionRegistry;
 import io.jikkou.core.models.change.GenericResourceChange;
 import io.jikkou.core.models.change.ResourceChange;
 import io.jikkou.core.resource.ResourceRegistry;
+import io.jikkou.http.client.ClientHeadersConfig;
 import io.jikkou.http.client.proxy.ProxyConfig;
 import io.jikkou.http.client.ssl.SSLConfig;
 import io.jikkou.schema.registry.api.AuthMethod;
@@ -32,7 +33,6 @@ import io.jikkou.schema.registry.validation.SubjectNameRegexValidation;
 import io.jikkou.spi.BaseExtensionProvider;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -86,13 +86,6 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
             .displayName("Normalize Schemas")
             .description("Specify whether to normalize schemas (default: true).")
             .defaultValue(true);
-
-        ConfigProperty<Map<String, Object>> SCHEMA_REGISTRY_CLIENT_HEADERS = ConfigProperty
-                .ofMap("clientHeaders")
-                .displayName("Client Headers")
-                .description("Passthrough properties for Schema Registry Client Headers."
-                    + " Covers arbitrary client headers to pass on http connections.")
-                .defaultValue(Map.of());
     }
 
     private SchemaRegistryClientConfig clientConfig;
@@ -108,7 +101,7 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
             Config.SCHEMA_REGISTRY_BASIC_AUTH_PASSWORD,
             Config.SCHEMA_REGISTRY_DEBUG_LOGGING_ENABLED,
             Config.NORMALIZE_SCHEMAS_ENABLED,
-            Config.SCHEMA_REGISTRY_CLIENT_HEADERS
+            ClientHeadersConfig.CLIENT_HEADERS
         );
     }
 
@@ -120,8 +113,6 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
             .map(String::trim)
             .filter(s -> !s.isEmpty())
             .toList();
-        Map<String, Object> schemaRegistryClientHeaders = Config.SCHEMA_REGISTRY_CLIENT_HEADERS.get(configuration);
-
         this.clientConfig = new SchemaRegistryClientConfig(
             urls,
             Config.SCHEMA_REGISTRY_VENDOR.get(configuration),
@@ -131,7 +122,7 @@ public final class SchemaRegistryExtensionProvider extends BaseExtensionProvider
             () -> SSLConfig.from(configuration),
             () -> ProxyConfig.from(configuration),
             Config.SCHEMA_REGISTRY_DEBUG_LOGGING_ENABLED.get(configuration),
-            schemaRegistryClientHeaders
+            ClientHeadersConfig.from(configuration)
         );
     }
 

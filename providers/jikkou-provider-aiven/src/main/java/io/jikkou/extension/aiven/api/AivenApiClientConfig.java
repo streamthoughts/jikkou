@@ -7,6 +7,7 @@
 package io.jikkou.extension.aiven.api;
 
 import io.jikkou.http.client.proxy.ProxyConfig;
+import java.util.Map;
 
 public record AivenApiClientConfig(
     String apiUrl,
@@ -14,6 +15,7 @@ public record AivenApiClientConfig(
     String project,
     String service,
     ProxyConfig proxyConfig,
-    boolean debugLoggingEnabled
+    boolean debugLoggingEnabled,
+    Map<String, String> clientHeaders
 ) {
 }

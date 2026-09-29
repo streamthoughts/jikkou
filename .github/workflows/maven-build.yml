@@ -33,7 +33,7 @@ jobs:
       uses: actions/checkout@v7
 
     - name: 'Set up JDK'
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v6
       with:
         java-version: ${{ env.JAVA_VERSION }}
         distribution: ${{ env.JAVA_DISTRO }}
@@ -79,7 +79,7 @@ jobs:
     - name: Upload Trivy scan results to GitHub Security tab
       if: github.event_name == 'push'
       continue-on-error: true
-      uses: github/codeql-action/upload-sarif@v4
+      uses: github/codeql-action/upload-sarif@v4.37.8
       with:
         sarif_file: 'trivy-results.sarif'
 

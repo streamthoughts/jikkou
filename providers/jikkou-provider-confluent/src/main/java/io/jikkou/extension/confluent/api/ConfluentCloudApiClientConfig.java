@@ -7,6 +7,7 @@
 package io.jikkou.extension.confluent.api;
 
 import io.jikkou.http.client.proxy.ProxyConfig;
+import java.util.Map;
 
 /**
  * Configuration for the Confluent Cloud API client.
@@ -17,6 +18,7 @@ import io.jikkou.http.client.proxy.ProxyConfig;
  * @param crnPattern           CRN pattern used to scope role binding list operations.
  * @param proxyConfig          HTTP proxy configuration.
  * @param debugLoggingEnabled  Whether to enable debug logging.
+ * @param clientHeaders        Additional HTTP headers to send on every request.
  */
 public record ConfluentCloudApiClientConfig(
     String apiUrl,
@@ -24,6 +26,7 @@ public record ConfluentCloudApiClientConfig(
     String apiSecret,
     String crnPattern,
     ProxyConfig proxyConfig,
-    boolean debugLoggingEnabled
+    boolean debugLoggingEnabled,
+    Map<String, String> clientHeaders
 ) {
 }
