@@ -41,4 +41,42 @@ class JikkouConfigTest {
         Assertions.assertNotNull(config);
         Assertions.assertEquals(map, config.asMap());
     }
+
+    @Test
+    void shouldRedactSensitiveValues_whenToPrettyString() {
+        // Given
+        Map<String, String> map = Map.of(
+                "password", "secret123",
+                "basicAuthPassword", "xyz",
+                "host", "localhost",
+                "url", "http://localhost:8081");
+        JikkouConfig config = JikkouConfig.create(map, false);
+
+        // When
+        String pretty = config.toPrettyString();
+
+        // Then
+        Assertions.assertFalse(pretty.contains("secret123"));
+        Assertions.assertFalse(pretty.contains("xyz"));
+        Assertions.assertTrue(pretty.contains("password = ******"));
+        Assertions.assertTrue(pretty.contains("basicAuthPassword = ******"));
+    }
+
+    @Test
+    void shouldRenderNonSensitiveValuesAndPreserveKeys_whenToPrettyString() {
+        // Given
+        Map<String, String> map = Map.of(
+                "password", "secret123",
+                "host", "localhost",
+                "url", "http://localhost:8081");
+        JikkouConfig config = JikkouConfig.create(map, false);
+
+        // When
+        String pretty = config.toPrettyString();
+
+        // Then
+        Assertions.assertTrue(pretty.contains("host = localhost"));
+        Assertions.assertTrue(pretty.contains("url = http://localhost:8081"));
+        Assertions.assertTrue(pretty.contains("password"));
+    }
 }
