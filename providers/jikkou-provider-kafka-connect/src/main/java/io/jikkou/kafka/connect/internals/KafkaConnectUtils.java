@@ -18,6 +18,8 @@ public final class KafkaConnectUtils {
         mutableConfig.remove(KafkaConnectConstants.CONNECTOR_NAME_CONFIG);
         mutableConfig.remove(KafkaConnectConstants.CONNECTOR_CLASS_CONFIG);
         mutableConfig.remove(KafkaConnectConstants.CONNECTOR_TASKS_MAX_CONFIG);
+        // Internal properties are added by the Connect worker and can never be declared in a resource.
+        mutableConfig.keySet().removeIf(key -> key.startsWith(KafkaConnectConstants.CONNECTOR_INTERNAL_CONFIG_PREFIX));
         return Collections.unmodifiableMap(mutableConfig);
     }
 }

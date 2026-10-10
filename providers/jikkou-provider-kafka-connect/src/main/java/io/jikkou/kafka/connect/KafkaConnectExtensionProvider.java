@@ -26,7 +26,10 @@ import io.jikkou.kafka.connect.validation.KafkaConnectorResourceValidation;
 import io.jikkou.spi.BaseExtensionProvider;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Extension provider for Kafka Connect.
@@ -38,6 +41,11 @@ import org.jetbrains.annotations.NotNull;
 )
 public final class KafkaConnectExtensionProvider extends BaseExtensionProvider {
 
+    /**
+     * Default pattern for masked config values: a non-empty sequence of bullet characters (U+2022).
+     */
+    public static final String DEFAULT_MASKED_CONFIG_VALUE_PATTERN = "^\\u2022+$";
+
     private final ConfigProperty<List<KafkaConnectClientConfig>> clusters = ConfigProperty
         .ofConfigList("clusters")
         .displayName("Kafka Connect Clusters")
@@ -45,12 +53,22 @@ public final class KafkaConnectExtensionProvider extends BaseExtensionProvider {
         .defaultValue(Collections.emptyList())
         .description("List of Kafka Connect Cluster configuration.");
 
+    private final ConfigProperty<String> maskedConfigValuePattern = ConfigProperty
+        .ofString("maskedConfigValuePattern")
+        .displayName("Masked Config Value Pattern")
+        .defaultValue(DEFAULT_MASKED_CONFIG_VALUE_PATTERN)
+        .description("Regular expression matching connector config values masked by the Kafka Connect REST API "
+            + "(e.g. passwords). A masked value is considered equal to the desired value when computing changes. "
+            + "Set to an empty string to disable.");
+
     private KafkaConnectClusterConfigs clusterConfigs;
+
+    private Pattern maskedConfigValueRegex;
 
     /** {@inheritDoc} **/
     @Override
     public List<ConfigProperty<?>> configProperties() {
-        return List.of(clusters);
+        return List.of(clusters, maskedConfigValuePattern);
     }
 
     /**
@@ -60,10 +78,33 @@ public final class KafkaConnectExtensionProvider extends BaseExtensionProvider {
     public void configure(@NotNull Configuration configuration) throws ConfigException {
         super.configure(configuration);
         this.clusterConfigs = new KafkaConnectClusterConfigs(clusters.get(configuration));
+        this.maskedConfigValueRegex = compileMaskedConfigValuePattern(maskedConfigValuePattern.get(configuration));
     }
 
     public KafkaConnectClusterConfigs clusterConfigs() {
         return clusterConfigs;
+    }
+
+    /**
+     * Gets the pattern matching connector config values masked by the Kafka Connect REST API.
+     *
+     * @return the pattern, or {@code null} if masked values detection is disabled.
+     */
+    public @Nullable Pattern maskedConfigValuePattern() {
+        return maskedConfigValueRegex;
+    }
+
+    private Pattern compileMaskedConfigValuePattern(String regex) {
+        if (regex == null || regex.isBlank()) {
+            return null;
+        }
+        try {
+            return Pattern.compile(regex);
+        } catch (PatternSyntaxException e) {
+            throw new ConfigException(String.format(
+                "Invalid value for '%s': %s", maskedConfigValuePattern.key(), e.getMessage()
+            ));
+        }
     }
 
     /**

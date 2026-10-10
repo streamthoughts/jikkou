@@ -42,6 +42,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,13 +59,17 @@ public final class KafkaConnectorController extends ContextualExtension implemen
 
     private KafkaConnectorCollector collector;
 
+    private Pattern maskedConfigValuePattern;
+
     /**
      * {@inheritDoc}
      **/
     @Override
     public void init(@NotNull ExtensionContext context) {
         super.init(context);
-        this.configuration = context.<KafkaConnectExtensionProvider>provider().clusterConfigs();
+        KafkaConnectExtensionProvider provider = context.provider();
+        this.configuration = provider.clusterConfigs();
+        this.maskedConfigValuePattern = provider.maskedConfigValuePattern();
         this.collector = new KafkaConnectorCollector();
         this.collector.init(context);
     }
@@ -113,7 +118,7 @@ public final class KafkaConnectorController extends ContextualExtension implemen
             resources,
             t -> true);
 
-        KafkaConnectorChangeComputer computer = new KafkaConnectorChangeComputer();
+        KafkaConnectorChangeComputer computer = new KafkaConnectorChangeComputer(maskedConfigValuePattern);
 
         List<ResourceChange> allChanges = new LinkedList<>();
         for (Map.Entry<String, List<V1KafkaConnector>> entry : resourcesByCluster.entrySet()) {
