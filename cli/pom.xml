@@ -73,6 +73,15 @@
                 <artifactId>postgresql</artifactId>
                 <version>${postgresql.version}</version>
             </dependency>
+            <!-- AWS SDK BOM must also be imported BEFORE Micronaut, which otherwise
+                 downgrades the AWS SDK modules pulled in by aws-msk-iam-auth. -->
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${awssdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Micronaut -->
             <dependency>
                 <groupId>io.micronaut.platform</groupId>
