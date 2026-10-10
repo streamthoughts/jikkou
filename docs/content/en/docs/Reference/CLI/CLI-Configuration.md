@@ -164,6 +164,32 @@ jikkou {
 }
 ```
 
+### Authenticating Remote Resources
+
+Resource files, values files, and `$ref` locations (for example, a schema referenced by a `SchemaRegistrySubject`)
+can be loaded from remote HTTP(S) URLs. If a remote server requires HTTP Basic authentication, you can configure
+credentials per host using the `jikkou.io.http.authentications` property:
+
+```hocon
+jikkou {
+  io.http.authentications = [
+    { host = "repo.example.com", username = ${?REPO_USERNAME}, password = ${?REPO_PASSWORD} }
+  ]
+}
+```
+
+- `host`: the host to match. Matching is exact and case-insensitive, and ignores the port.
+- `username`, `password`: the Basic credentials sent in the `Authorization` header for requests to that host.
+
+Credentials are only checked when Jikkou actually fetches a URL from a configured host. If a referenced environment
+variable is not set at that point, the command fails with an error naming the missing key.
+
+{{% alert title="Note" color="warning" %}}
+Prefer `https://` URLs: over plain `http://`, Basic credentials are sent unencrypted.
+Values of sensitive properties (such as passwords, secrets, tokens, `sasl.jaas.config`, or `basic.auth.user.info`)
+are redacted when Jikkou logs its configuration.
+{{% /alert %}}
+
 ### Managing Contexts
 
 For detailed usage of all configuration commands, see the [Commands Reference]({{% relref "./Commands/jikkou-config" %}}):
