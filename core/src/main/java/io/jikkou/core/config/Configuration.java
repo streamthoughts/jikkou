@@ -24,7 +24,6 @@ import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -767,20 +766,18 @@ public interface Configuration {
     /**
      * Returns a pretty string representation of this configuration.
      *
-     * <p>Values of keys matching a sensitive pattern (e.g. password, secret, token) are redacted
-     * to avoid leaking secrets when the configuration is logged.
+     * <p>Values of keys matching a sensitive pattern (e.g. password, secret, token, sasl.jaas.config,
+     * basic.auth.user.info) are redacted to avoid leaking secrets when the configuration is logged,
+     * including when nested inside structured values such as lists of objects.
      *
      * @param delimiter the delimiter to use for joining configuration entries.
      * @return the pretty string representation.
      */
     default String toPrettyString(String delimiter) {
-        Pattern sensitiveKeys =
-                Pattern.compile(".*(password|secret|token|private[._-]?key|credential).*", Pattern.CASE_INSENSITIVE);
         Map<String, Object> confAsMap = new TreeMap<>(asMap());
         return confAsMap.entrySet()
                 .stream()
-                .map(e -> e.getKey() + " = "
-                        + (sensitiveKeys.matcher(e.getKey()).matches() ? "******" : e.getValue()))
+                .map(e -> e.getKey() + " = " + ConfigValueRedactor.redact(e.getKey(), e.getValue()))
                 .collect(Collectors.joining(delimiter));
     }
 
