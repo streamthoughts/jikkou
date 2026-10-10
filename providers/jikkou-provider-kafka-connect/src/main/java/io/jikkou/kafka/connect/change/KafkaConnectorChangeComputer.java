@@ -18,9 +18,12 @@ import io.jikkou.kafka.connect.models.KafkaConnectorState;
 import io.jikkou.kafka.connect.models.V1KafkaConnector;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
+import org.jetbrains.annotations.Nullable;
 
 public final class KafkaConnectorChangeComputer extends ResourceChangeComputer<String, V1KafkaConnector> {
 
@@ -33,10 +36,30 @@ public final class KafkaConnectorChangeComputer extends ResourceChangeComputer<S
      * Creates a new {@link ResourceChangeComputer} instance.
      */
     public KafkaConnectorChangeComputer() {
-        super(object -> object.getMetadata().getName(), new KafkaConnectorChangeFactory());
+        this(null);
+    }
+
+    /**
+     * Creates a new {@link ResourceChangeComputer} instance.
+     *
+     * @param maskedValuePattern the pattern matching config values masked by the Kafka Connect REST API,
+     *                           or {@code null} to compare all values as-is.
+     */
+    public KafkaConnectorChangeComputer(@Nullable Pattern maskedValuePattern) {
+        super(object -> object.getMetadata().getName(), new KafkaConnectorChangeFactory(maskedValuePattern));
     }
 
     public static class KafkaConnectorChangeFactory extends ResourceChangeFactory<String, V1KafkaConnector> {
+
+        private final Pattern maskedValuePattern;
+
+        public KafkaConnectorChangeFactory() {
+            this(null);
+        }
+
+        public KafkaConnectorChangeFactory(@Nullable Pattern maskedValuePattern) {
+            this.maskedValuePattern = maskedValuePattern;
+        }
 
         @Override
         public ResourceChange createChangeForCreate(String key, V1KafkaConnector after) {
@@ -65,7 +88,9 @@ public final class KafkaConnectorChangeComputer extends ResourceChangeComputer<S
                 changes.add(StateChange.with(DATA_STATE, getState(before), getState(after)));
             }
             // Compute change for 'config'
-            changes.addAll(ChangeComputer.computeChanges(getConfig(before), getConfig(after), true)
+            Map<String, Object> afterConfig = getConfig(after);
+            Map<String, Object> beforeConfig = unmaskConfig(getConfig(before), afterConfig);
+            changes.addAll(ChangeComputer.computeChanges(beforeConfig, afterConfig, true)
                 .stream()
                 .map(change -> change.withName(DATA_CONFIG_PREFIX + change.getName()))
                 .toList()
@@ -80,6 +105,26 @@ public final class KafkaConnectorChangeComputer extends ResourceChangeComputer<S
                     .build()
                 )
                 .build();
+        }
+
+        /**
+         * Some Kafka Connect distributions hide sensitive values (e.g. passwords) behind a mask when the
+         * connector config is read back. The real value cannot be known, so a masked value is assumed to be
+         * equal to the desired one rather than being reported as a permanent drift.
+         */
+        private Map<String, Object> unmaskConfig(Map<String, Object> actual, Map<String, Object> expected) {
+            if (maskedValuePattern == null || actual.isEmpty() || expected.isEmpty()) {
+                return actual;
+            }
+            Map<String, Object> unmasked = new HashMap<>(actual);
+            actual.forEach((key, value) -> {
+                if (value instanceof String str
+                    && expected.containsKey(key)
+                    && maskedValuePattern.matcher(str).matches()) {
+                    unmasked.put(key, expected.get(key));
+                }
+            });
+            return unmasked;
         }
     }
 

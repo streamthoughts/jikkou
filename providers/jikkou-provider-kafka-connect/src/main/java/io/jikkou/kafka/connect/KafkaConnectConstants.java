@@ -11,4 +11,5 @@ public class KafkaConnectConstants {
     public static final String CONNECTOR_NAME_CONFIG = "name";
     public static final String CONNECTOR_TASKS_MAX_CONFIG = "tasks.max";
     public static final String CONNECTOR_CLASS_CONFIG = "connector.class";
+    public static final String CONNECTOR_INTERNAL_CONFIG_PREFIX = "__internal.";
 }

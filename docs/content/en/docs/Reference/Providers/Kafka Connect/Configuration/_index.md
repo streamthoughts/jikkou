@@ -78,6 +78,9 @@ jikkou {
           }
         }
       ]
+      # Regular expression matching connector config values masked by the Kafka Connect REST API.
+      # Set to an empty string to disable.
+      maskedConfigValuePattern = "^\\u2022+$"
     }
   }
 }
@@ -126,4 +129,39 @@ case-insensitively.
 When debug logging is enabled, header values are redacted if the header name is
 `Authorization`, `Proxy-Authorization`, `Cookie`, or `Set-Cookie`, or if it contains
 `token`, `secret`, `key`, or `password`. Header names are always logged in full.
+{{% /alert %}}
+
+## Masked config values
+
+Some Kafka Connect distributions, such as Confluent Platform, mask sensitive values (e.g. passwords)
+when a connector config is read back from `GET /connectors/{name}/config`. A value set through a
+`ConfigProvider` reference like `${file:/path/secrets.properties:connection.password}` is then
+returned as `••••••••`, which would otherwise be reported as a change on every run.
+
+The `maskedConfigValuePattern` property is a regular expression matched against each value returned
+by Kafka Connect. When a value matches, Jikkou cannot know the real value, so it assumes it is equal to
+the desired one and reports no change for that property. The default, `^\u2022+$`, matches a non-empty
+sequence of bullet characters.
+
+```hocon
+jikkou {
+  provider.kafkaconnect {
+    config = {
+      # Also treat '[hidden]' as a masked value.
+      maskedConfigValuePattern = "^(\\u2022+|\\[hidden\\])$"
+    }
+  }
+}
+```
+
+{{% alert title="Note" color="info" %}}
+Because masked values are not compared, changing only the value behind a masked property is not
+detected. Change the reference itself (e.g. the file path or key), or force an update by changing
+another property. A masked property removed from the resource is still reported as deleted.
+Set `maskedConfigValuePattern` to an empty string to compare all values as-is.
+{{% /alert %}}
+
+{{% alert title="Note" color="info" %}}
+Properties prefixed with `__internal.` (e.g. `__internal.config.version`) are added by the Connect
+worker and are always ignored when computing changes.
 {{% /alert %}}
