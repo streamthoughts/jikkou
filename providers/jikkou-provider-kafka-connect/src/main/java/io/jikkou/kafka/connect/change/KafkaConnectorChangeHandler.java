@@ -28,6 +28,7 @@ import io.jikkou.kafka.connect.api.data.ErrorResponse;
 import io.jikkou.kafka.connect.models.KafkaConnectorState;
 import jakarta.ws.rs.WebApplicationException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,16 +170,31 @@ public final class KafkaConnectorChangeHandler extends BaseChangeHandler {
             || Change.computeOperation(getConfig(change)) != Operation.NONE;
     }
 
+    /**
+     * Builds the connector configuration to send to the Kafka Connect REST API.
+     * <p>
+     * All values are converted to strings: the Kafka Connect REST API expects a {@code Map<String, String>}, and
+     * some implementations (e.g. Confluent Cloud) strictly reject requests containing non-string values.
+     */
     private Map<String, Object> buildConnectorConfig(final ResourceChange change) {
         Map<String, Object> configs = getConfig(change)
             .stream()
             .filter(state -> state.getOp() != Operation.DELETE && state.getAfter() != null)
-            .collect(Collectors.toMap(StateChange::getName, StateChange::getAfter));
+            .collect(Collectors.toMap(StateChange::getName, state -> toConfigValue(state.getAfter())));
         Map<String, Object> config = new HashMap<>();
-        config.put(CONNECTOR_TASKS_MAX_CONFIG, getTasksMax(change).getAfter());
+        config.put(CONNECTOR_TASKS_MAX_CONFIG, toConfigValue(getTasksMax(change).getAfter()));
         config.put(CONNECTOR_CLASS_CONFIG, getConnectorClass(change).getAfter());
         config.putAll(configs);
         return config;
+    }
+
+    private static String toConfigValue(final Object value) {
+        return switch (value) {
+            case null -> null;
+            // Kafka Connect LIST configs are comma-separated strings.
+            case Collection<?> collection -> collection.stream().map(String::valueOf).collect(Collectors.joining(","));
+            default -> String.valueOf(value);
+        };
     }
 
     private static List<StateChange> getConfig(ResourceChange change) {

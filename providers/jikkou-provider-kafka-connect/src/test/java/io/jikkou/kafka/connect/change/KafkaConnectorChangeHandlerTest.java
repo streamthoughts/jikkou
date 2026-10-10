@@ -19,6 +19,7 @@ import io.jikkou.kafka.connect.api.KafkaConnectApi;
 import io.jikkou.kafka.connect.api.data.ConnectorCreateRequest;
 import io.jikkou.kafka.connect.models.KafkaConnectorState;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -348,6 +349,71 @@ class KafkaConnectorChangeHandlerTest {
         List<ChangeMetadata> metadata = results.getFirst().getResults().join();
         Assertions.assertTrue(metadata.stream().anyMatch(m -> m.getError().isPresent()));
         Mockito.verifyNoInteractions(mkKafkaConnectApi);
+    }
+
+    @Test
+    void shouldSendAllConfigValuesAsStringsGivenCreateChange() {
+        KafkaConnectApi mkKafkaConnectApi = Mockito.mock(KafkaConnectApi.class);
+        KafkaConnectorChangeHandler handler = new KafkaConnectorChangeHandler(mkKafkaConnectApi, TEST_CONNECTOR_NAME);
+
+        ResourceChange change = GenericResourceChange
+                .builder()
+                .withMetadata(ObjectMeta.builder().withName(TEST_CONNECTOR_NAME).build())
+                .withSpec(ResourceChangeSpec
+                        .builder()
+                        .withOperation(Operation.CREATE)
+                        .withChange(StateChange.create("connectorClass", "DatagenSource"))
+                        .withChange(StateChange.create("tasksMax", 1))
+                        .withChange(StateChange.create("state", KafkaConnectorState.RUNNING))
+                        .withChange(StateChange.create("config.flush.size", 100))
+                        .withChange(StateChange.create("config.errors.log.enable", true))
+                        .withChange(StateChange.create("config.topics", List.of("a", "b")))
+                        .build()
+                )
+                .build();
+
+        List<ChangeResponse> results = handler.handleChanges(List.of(change));
+        assertNoError(results.getFirst());
+
+        ArgumentCaptor<ConnectorCreateRequest> requestCaptor = ArgumentCaptor.forClass(ConnectorCreateRequest.class);
+        Mockito.verify(mkKafkaConnectApi).createConnector(requestCaptor.capture());
+
+        Assertions.assertEquals(Map.of(
+            "connector.class", "DatagenSource",
+            "tasks.max", "1",
+            "flush.size", "100",
+            "errors.log.enable", "true",
+            "topics", "a,b"
+        ), requestCaptor.getValue().config());
+    }
+
+    @Test
+    void shouldSendAllConfigValuesAsStringsGivenUpdateChange() {
+        KafkaConnectApi mkKafkaConnectApi = Mockito.mock(KafkaConnectApi.class);
+        KafkaConnectorChangeHandler handler = new KafkaConnectorChangeHandler(mkKafkaConnectApi, TEST_CONNECTOR_NAME);
+
+        ResourceChange change = GenericResourceChange
+                .builder()
+                .withMetadata(ObjectMeta.builder().withName(TEST_CONNECTOR_NAME).build())
+                .withSpec(ResourceChangeSpec
+                        .builder()
+                        .withOperation(Operation.UPDATE)
+                        .withChange(StateChange.none("connectorClass", "DatagenSource"))
+                        .withChange(StateChange.update("tasksMax", 1, 2))
+                        .withChange(StateChange.none("state", KafkaConnectorState.RUNNING))
+                        .withChange(StateChange.update("config.flush.size", 100, 200))
+                        .build()
+                )
+                .build();
+
+        List<ChangeResponse> results = handler.handleChanges(List.of(change));
+        assertNoError(results.getFirst());
+
+        Mockito.verify(mkKafkaConnectApi).createOrUpdateConnector(TEST_CONNECTOR_NAME, Map.of(
+            "connector.class", "DatagenSource",
+            "tasks.max", "2",
+            "flush.size", "200"
+        ));
     }
 
     private static ResourceChange newConfigAndStateChange(KafkaConnectorState before, KafkaConnectorState after) {
