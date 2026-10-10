@@ -66,6 +66,15 @@
       ]
     },
     {
+      "type": "software.amazon.awssdk.services.ssooidc.SsoOidcProfileTokenProviderFactory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
       "type": "software.amazon.awssdk.services.sts.internal.StsProfileCredentialsProviderFactory",
       "methods": [
         {

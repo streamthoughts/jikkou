@@ -50,6 +50,9 @@ class AwsMskIamAuthNativeMetadataTest {
         // The AWS SDK loads these factories via Class.forName to resolve SSO and assume-role profiles.
         Assertions.assertTrue(reflectionTypes.contains(
                 "software.amazon.awssdk.services.sso.auth.SsoProfileCredentialsProviderFactory"));
+        // Required for SSO profiles referencing an 'sso-session' section (default since 'aws configure sso').
+        Assertions.assertTrue(reflectionTypes.contains(
+                "software.amazon.awssdk.services.ssooidc.SsoOidcProfileTokenProviderFactory"));
         Assertions.assertTrue(reflectionTypes.contains(
                 "software.amazon.awssdk.services.sts.internal.StsProfileCredentialsProviderFactory"));
     }
