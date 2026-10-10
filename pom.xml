@@ -116,7 +116,7 @@
         <!-- Dependencies -->
         <kafka.version>4.3.1</kafka.version>
         <picocli.version>4.7.7</picocli.version>
-        <jackson.version>2.21.4</jackson.version>
+        <jackson.version>2.21.7</jackson.version>
         <jinjava.version>2.8.3</jinjava.version>
         <lombok.version>1.18.42</lombok.version>
         <config.version>1.4.9</config.version>
@@ -126,9 +126,10 @@
         <reactor-core.version>3.8.2</reactor-core.version>
         <cel.version>0.9.1</cel.version>
         <avro.version>1.12.1</avro.version>
-        <lz4.version>1.8.1</lz4.version>
-        <netty.version>4.2.16.Final</netty.version>
-        <bouncycastle.version>1.84</bouncycastle.version>
+        <lz4.version>1.11.4</lz4.version>
+        <netty.version>4.2.19.Final</netty.version>
+        <bouncycastle.version>1.85</bouncycastle.version>
+        <httpcore5.version>5.4.4</httpcore5.version>
         <postgresql.version>42.7.12</postgresql.version>
         <!-- Logging -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
@@ -165,8 +166,9 @@
                 <artifactId>avro</artifactId>
                 <version>${avro.version}</version>
             </dependency>
+            <!-- Override transitive lz4-java from kafka-clients (CVE-2026-106451) -->
             <dependency>
-                <groupId>org.lz4</groupId>
+                <groupId>at.yawk.lz4</groupId>
                 <artifactId>lz4-java</artifactId>
                 <version>${lz4.version}</version>
             </dependency>
@@ -177,7 +179,18 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Override transitive bcprov-jdk18on from hadoop-common (CVE-2026-5598) -->
+            <!-- Override transitive httpcore5 from httpclient5 (CVE-2026-54399, CVE-2026-54428) -->
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5</artifactId>
+                <version>${httpcore5.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5-h2</artifactId>
+                <version>${httpcore5.version}</version>
+            </dependency>
+            <!-- Override transitive bcprov-jdk18on from hadoop-common (CVE-2026-5598, CVE-2026-8763) -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
