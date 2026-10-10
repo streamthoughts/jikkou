@@ -55,6 +55,24 @@
       "type": "software.amazon.awssdk.auth.credentials.ContainerCredentialsProvider",
       "allDeclaredMethods": true,
       "allDeclaredConstructors": true
+    },
+    {
+      "type": "software.amazon.awssdk.services.sso.auth.SsoProfileCredentialsProviderFactory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "software.amazon.awssdk.services.sts.internal.StsProfileCredentialsProviderFactory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
     }
   ],
   "resources": [
