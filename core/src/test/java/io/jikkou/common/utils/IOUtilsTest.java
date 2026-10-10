@@ -6,10 +6,21 @@
  */
 package io.jikkou.common.utils;
 
+import com.sun.net.httpserver.HttpServer;
+import io.jikkou.core.exceptions.JikkouRuntimeException;
+import io.jikkou.core.io.HttpAuthenticator;
+import io.jikkou.runtime.JikkouConfig;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -142,5 +153,95 @@ class IOUtilsTest {
         // Then
         Assertions.assertEquals(1, result.size());
         Assertions.assertTrue(Files.isRegularFile(result.getFirst()));
+    }
+
+    @Test
+    void shouldSendBasicAuthHeader_whenHostMatchesConfig() throws Exception {
+        // Given
+        AtomicReference<String> authHeader = new AtomicReference<>();
+        HttpServer server = newHttpServer(authHeader);
+        try {
+            HttpAuthenticator.configure(HttpAuthenticator.fromConfiguration(JikkouConfig.create(
+                    Map.of(HttpAuthenticator.CONFIG_KEY, List.of(
+                            Map.of("host", "127.0.0.1", "username", "user", "password", "pass"))),
+                    false)));
+
+            // When
+            String content = new String(
+                    IOUtils.openStream(new URL("http://127.0.0.1:" + server.getAddress().getPort() + "/x"))
+                            .readAllBytes(),
+                    StandardCharsets.UTF_8);
+
+            // Then
+            Assertions.assertEquals("hello", content);
+            String expected = "Basic "
+                    + Base64.getEncoder().encodeToString("user:pass".getBytes(StandardCharsets.UTF_8));
+            Assertions.assertEquals(expected, authHeader.get());
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void shouldNotSendAuthHeader_whenNoConfigEntry() throws Exception {
+        // Given
+        AtomicReference<String> authHeader = new AtomicReference<>();
+        HttpServer server = newHttpServer(authHeader);
+        try {
+            HttpAuthenticator.configure(new HttpAuthenticator(List.of()));
+
+            // When
+            String content = new String(
+                    IOUtils.openStream(new URL("http://127.0.0.1:" + server.getAddress().getPort() + "/x"))
+                            .readAllBytes(),
+                    StandardCharsets.UTF_8);
+
+            // Then
+            Assertions.assertEquals("hello", content);
+            Assertions.assertNull(authHeader.get());
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void shouldThrowMeaningfulError_whenHostMatchesButCredentialsMissing() throws Exception {
+        // Given
+        AtomicReference<String> authHeader = new AtomicReference<>();
+        HttpServer server = newHttpServer(authHeader);
+        try {
+            HttpAuthenticator.configure(HttpAuthenticator.fromConfiguration(JikkouConfig.create(
+                    Map.of(HttpAuthenticator.CONFIG_KEY, List.of(
+                            Map.of("host", "127.0.0.1", "username", "user"))),
+                    false)));
+
+            // When
+            JikkouRuntimeException exception = Assertions.assertThrows(JikkouRuntimeException.class, () ->
+                    IOUtils.openStream(new URL("http://127.0.0.1:" + server.getAddress().getPort() + "/x")));
+
+            // Then
+            Assertions.assertTrue(exception.getMessage().contains("password"));
+            Assertions.assertTrue(exception.getMessage().contains(HttpAuthenticator.CONFIG_KEY));
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @AfterEach
+    void resetHttpAuthenticator() {
+        HttpAuthenticator.configure(new HttpAuthenticator(List.of()));
+    }
+
+    private static HttpServer newHttpServer(AtomicReference<String> authHeader) throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/x", exchange -> {
+            authHeader.set(exchange.getRequestHeaders().getFirst("Authorization"));
+            byte[] body = "hello".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        server.start();
+        return server;
     }
 }

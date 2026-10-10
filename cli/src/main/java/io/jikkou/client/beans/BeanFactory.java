@@ -19,6 +19,7 @@ import io.jikkou.core.extension.DefaultExtensionFactory;
 import io.jikkou.core.extension.DefaultExtensionRegistry;
 import io.jikkou.core.extension.ExtensionDescriptorRegistry;
 import io.jikkou.core.extension.ExtensionFactory;
+import io.jikkou.core.io.HttpAuthenticator;
 import io.jikkou.core.io.writer.DefaultResourceWriter;
 import io.jikkou.core.io.writer.ResourceWriter;
 import io.jikkou.core.repository.LocalResourceRepository;
@@ -93,7 +94,9 @@ public final class BeanFactory {
 
     @Singleton
     public Configuration configuration() {
-        return GlobalConfigurationContext.getConfiguration();
+        Configuration configuration = GlobalConfigurationContext.getConfiguration();
+        HttpAuthenticator.configure(HttpAuthenticator.fromConfiguration(configuration));
+        return configuration;
     }
 
     @Singleton

@@ -7,10 +7,12 @@
 package io.jikkou.common.utils;
 
 import io.jikkou.core.exceptions.InvalidResourceFileException;
+import io.jikkou.core.io.HttpAuthenticator;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -177,7 +179,13 @@ public final class IOUtils {
 
     public static InputStream openStream(final URL url) {
         try {
-            return new BufferedInputStream(url.openStream());
+            String protocol = url.getProtocol();
+            if (!protocol.equalsIgnoreCase("http") && !protocol.equalsIgnoreCase("https")) {
+                return new BufferedInputStream(url.openStream());
+            }
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            HttpAuthenticator.get().authenticate(connection);
+            return new BufferedInputStream(connection.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
