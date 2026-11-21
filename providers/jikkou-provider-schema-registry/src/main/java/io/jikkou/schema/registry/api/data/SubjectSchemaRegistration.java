@@ -15,10 +15,10 @@ import java.util.List;
 
 @Reflectable
 public record SubjectSchemaRegistration(
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    @JsonProperty("id") String id,
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    @JsonProperty("version") String version,
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("id") Integer id,
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("version") Integer version,
     @JsonProperty("schema") String schema,
     @JsonProperty("schemaType") SchemaType schemaType,
     @JsonProperty("references") List<SubjectSchemaReference> references
@@ -30,8 +30,8 @@ public record SubjectSchemaRegistration(
      * @param schema     subject under which the schema will be registered.
      * @param schemaType the schema format.
      */
-    public SubjectSchemaRegistration(String id,
-                                     String version,
+    public SubjectSchemaRegistration(Integer id,
+                                     Integer version,
                                      String schema,
                                      SchemaType schemaType) {
         this(id, version, schema, schemaType, Collections.emptyList());
