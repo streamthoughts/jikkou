@@ -31,12 +31,15 @@ import io.jikkou.core.reconciler.Operation;
 import io.jikkou.schema.registry.api.AsyncSchemaRegistryApi;
 import io.jikkou.schema.registry.api.data.CompatibilityObject;
 import io.jikkou.schema.registry.api.data.SubjectSchemaId;
+import io.jikkou.schema.registry.api.data.SubjectSchemaRegistration;
 import io.jikkou.schema.registry.model.CompatibilityLevels;
 import io.jikkou.schema.registry.models.V1SchemaRegistrySubject;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 import reactor.core.publisher.Mono;
@@ -187,6 +190,78 @@ class UpdateSchemaSubjectChangeHandlerTest {
         verify(api, never()).updateSubjectCompatibilityLevel(any(), any());
     }
 
+    @Test
+    void shouldRegisterSchemaWithIntegerIdAndVersionWhenAnnotationsAreSet() {
+        // Given
+        AsyncSchemaRegistryApi api = mock(AsyncSchemaRegistryApi.class);
+        when(api.registerSubjectVersion(eq(TEST_SUBJECT), any(), anyBoolean()))
+                .thenReturn(Mono.just(new SubjectSchemaId(1001)));
+
+        UpdateSchemaSubjectChangeHandler handler = new UpdateSchemaSubjectChangeHandler(api);
+        ResourceChange change = createUpdateChange(
+                CompatibilityLevels.BACKWARD, CompatibilityLevels.BACKWARD,
+                "schema-v1", "schema-v2",
+                Collections.emptyList(), Collections.emptyList(),
+                Map.of("permanentDelete", false, "normalizeSchema", false, "schemaId", "1001", "version", "1")
+        );
+
+        // When
+        List<ChangeResponse> responses = handler.handleChanges(List.of(change));
+        responses.forEach(r -> r.getResults().join());
+
+        // Then
+        ArgumentCaptor<SubjectSchemaRegistration> captor = ArgumentCaptor.forClass(SubjectSchemaRegistration.class);
+        verify(api).registerSubjectVersion(eq(TEST_SUBJECT), captor.capture(), anyBoolean());
+        Assertions.assertEquals(1001, captor.getValue().id());
+        Assertions.assertEquals(1, captor.getValue().version());
+    }
+
+    @Test
+    void shouldRegisterSchemaWithoutIdAndVersionWhenAnnotationsAreUnset() {
+        // Given
+        AsyncSchemaRegistryApi api = mock(AsyncSchemaRegistryApi.class);
+        when(api.registerSubjectVersion(eq(TEST_SUBJECT), any(), anyBoolean()))
+                .thenReturn(Mono.just(new SubjectSchemaId(1)));
+
+        UpdateSchemaSubjectChangeHandler handler = new UpdateSchemaSubjectChangeHandler(api);
+        ResourceChange change = createUpdateChange(
+                CompatibilityLevels.BACKWARD, CompatibilityLevels.BACKWARD,
+                "schema-v1", "schema-v2"
+        );
+
+        // When
+        List<ChangeResponse> responses = handler.handleChanges(List.of(change));
+        responses.forEach(r -> r.getResults().join());
+
+        // Then
+        ArgumentCaptor<SubjectSchemaRegistration> captor = ArgumentCaptor.forClass(SubjectSchemaRegistration.class);
+        verify(api).registerSubjectVersion(eq(TEST_SUBJECT), captor.capture(), anyBoolean());
+        Assertions.assertNull(captor.getValue().id());
+        Assertions.assertNull(captor.getValue().version());
+    }
+
+    @Test
+    void shouldNotRegisterSchemaWhenSchemaIdAnnotationIsNotAnInteger() {
+        // Given
+        AsyncSchemaRegistryApi api = mock(AsyncSchemaRegistryApi.class);
+
+        UpdateSchemaSubjectChangeHandler handler = new UpdateSchemaSubjectChangeHandler(api);
+        ResourceChange change = createUpdateChange(
+                CompatibilityLevels.BACKWARD, CompatibilityLevels.BACKWARD,
+                "schema-v1", "schema-v2",
+                Collections.emptyList(), Collections.emptyList(),
+                Map.of("permanentDelete", false, "normalizeSchema", false, "schemaId", "abc", "version", "")
+        );
+
+        // When
+        List<ChangeResponse> responses = handler.handleChanges(List.of(change));
+        responses.forEach(r -> r.getResults().join());
+
+        // Then
+        verify(api, never()).registerSubjectVersion(any(), any(), anyBoolean());
+        Assertions.assertTrue(responses.getFirst().getResults().join().stream().anyMatch(m -> m.getError().isPresent()));
+    }
+
     private ResourceChange createUpdateChange(
             CompatibilityLevels compatBefore,
             CompatibilityLevels compatAfter,
@@ -202,6 +277,18 @@ class UpdateSchemaSubjectChangeHandlerTest {
             String schemaAfter,
             List<Map<String, Object>> referencesBefore,
             List<Map<String, Object>> referencesAfter) {
+        return createUpdateChange(compatBefore, compatAfter, schemaBefore, schemaAfter,
+                referencesBefore, referencesAfter, DEFAULT_DATA);
+    }
+
+    private ResourceChange createUpdateChange(
+            CompatibilityLevels compatBefore,
+            CompatibilityLevels compatAfter,
+            String schemaBefore,
+            String schemaAfter,
+            List<Map<String, Object>> referencesBefore,
+            List<Map<String, Object>> referencesAfter,
+            Map<String, Object> data) {
 
         StateChange compatChange = compatBefore.equals(compatAfter)
                 ? StateChange.none(DATA_COMPATIBILITY_LEVEL, compatBefore)
@@ -226,7 +313,7 @@ class UpdateSchemaSubjectChangeHandlerTest {
                 .withSpec(ResourceChangeSpec
                         .builder()
                         .withOperation(Operation.UPDATE)
-                        .withData(DEFAULT_DATA)
+                        .withData(data)
                         .withChange(compatChange)
                         .withChange(schemaChange)
                         .withChange(StateChange.none(DATA_SCHEMA_TYPE, SchemaType.AVRO))

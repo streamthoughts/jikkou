@@ -114,8 +114,14 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
         SchemaSubjectChangeOptions options = getSchemaSubjectChangeOptions(change);
 
         final String subjectName = change.getMetadata().getName();
-        final String id = options.schemaId();
-        final String version = options.version();
+        final Integer id;
+        final Integer version;
+        try {
+            id = parseOptionalInteger(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_ID, options.schemaId());
+            version = parseOptionalInteger(SchemaRegistryAnnotations.SCHEMA_REGISTRY_SCHEMA_VERSION, options.version());
+        } catch (IllegalArgumentException e) {
+            return Mono.error(e);
+        }
         if (LOG.isInfoEnabled()) {
             LOG.info("Registering new Schema Registry subject version: id '{}', version '{}' subject '{}', optimization={}, schema={}.",
                     id,
@@ -151,6 +157,23 @@ public abstract class AbstractSchemaSubjectChangeHandler implements ChangeHandle
                                 );
                     }
                 });
+    }
+
+    /**
+     * Parses an optional integer value. Schema Registry APIs expect 'id' and 'version' as JSON integers,
+     * and strict implementations (e.g. Redpanda) reject string values.
+     */
+    static Integer parseOptionalInteger(@NotNull final String name, final String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return Integer.valueOf(value.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(
+                String.format("Invalid value for annotation '%s': expected an integer, got '%s'.", name, value)
+            );
+        }
     }
 
     protected SchemaSubjectChangeOptions getSchemaSubjectChangeOptions(@NotNull ResourceChange change) {
